@@ -2,17 +2,16 @@ import java.io.*;
 import java.util.*;
 
 public class MosaicGA {
-
-
     protected static int baris, kolom;
-
 
     protected static int[][] map;
 
     protected static int seed = 42;
     protected static final Random rnd = new Random(seed);
 
-    static double hitungFit(ArrayList<Integer> genes) {
+
+    //TODO : Bikin Variasi lain dari fungsi fitness ini
+    static double hitungFit(ArrayList<Integer> gene) {
         int totalError = 0;
 
         for (int y = 0; y < baris; y++) {
@@ -21,7 +20,7 @@ public class MosaicGA {
 
                 if (clue == -1) continue;
 
-                int currentBlacks = hitungHitam(genes, x, y);
+                int currentBlacks = hitungHitam(gene, x, y);
 
                 totalError += Math.abs(currentBlacks - clue);
             }
@@ -29,7 +28,7 @@ public class MosaicGA {
         return (double) totalError;
     }
 
-    private static int hitungHitam(ArrayList<Integer> genes, int cX, int cY) {
+    private static int hitungHitam(ArrayList<Integer> gene, int cX, int cY) {
         int count = 0;
 
         for (int dy = -1; dy <= 1; dy++) {
@@ -40,7 +39,7 @@ public class MosaicGA {
                 if (nX >= 0 && nX < kolom && nY >= 0 && nY < baris) {
                     // Konversi 2D (x,y) ke index 1D List
                     int index = nY * kolom + nX;
-                    if (genes.get(index) == 1) {
+                    if (gene.get(index) == 1) {
                         count++;
                     }
                 }
@@ -62,32 +61,32 @@ public class MosaicGA {
 
         map = inputMap;
 
-        System.out.println("--- Starting Mosaic GA ---");
+        System.out.println("--- Mulai GA Mosaic ---");
         System.out.println("Target: Fitness 0.0");
 
-        // Param pam pam
+        // Param pam pam (bisa diganti sesuai kebutuhan testing)
         int maxGenerations = 1000;
-        int populationSize = 100;
+        int populasiSize = 100;
         double crossoverRate = 0.8;
         double elitismRate = 0.05;
         double mutationRate = 0.02;
 
-        MosaicAlgoGA GA = new MosaicAlgoGA(rnd, populationSize, maxGenerations, mutationRate, elitismRate, crossoverRate);
+        MosaicAlgoGA GA = new MosaicAlgoGA(rnd, populasiSize, maxGenerations, mutationRate, elitismRate, crossoverRate);
 
-        Individual bestSolution = GA.run();
+        Individu bestSolution = GA.run();
 
         System.out.println("\n--- Best Solution Found ---");
         System.out.printf("Final Fitness: %.0f (0 is Solved)\n", bestSolution.getFitness());
 
-        printBoard(bestSolution.chromosome);
+        printBoard(bestSolution.kromosom);
     }
 
-    private static void printBoard(ArrayList<Integer> genes) {
+    private static void printBoard(ArrayList<Integer> gene) {
         for (int y = 0; y < baris; y++) {
             for (int x = 0; x < kolom; x++) {
                 int index = y * kolom + x;
-                int val = genes.get(index);
-                // Cetak '#' untuk Hitam, '.' untuk Putih
+                int val = gene.get(index);
+                // '#' untuk Hitam, '.' untuk Putih
                 System.out.print((val == 1 ? "# " : ". "));
             }
             System.out.println();
@@ -95,62 +94,64 @@ public class MosaicGA {
     }
 }
 
-class Individual implements Comparable<Individual> {
+class Individu implements Comparable<Individu> {
     public double fitness;
-    public Random MyRand;
+    public Random rand;
+    
     // Kromosom: 0 = Putih, 1 = Hitam
-    public ArrayList<Integer> chromosome;
+    public ArrayList<Integer> kromosom;
 
-    public Individual(Random MyRand) {
-        this.MyRand = MyRand;
-        this.chromosome = new ArrayList<>();
+    public Individu(Random rand) {
+        this.rand = rand;
+        this.kromosom = new ArrayList<>();
         this.fitness = Double.MAX_VALUE;
     }
 
-    public Individual(Random MyRand, int size) {
+    public Individu(Random rand, int size) {
         for (int i = 0; i < size; i++) {
-            this.chromosome.add(MyRand.nextBoolean() ? 1 : 0);
+            this.kromosom.add(rand.nextBoolean() ? 1 : 0);
         }
     }
 
-    // Deep Copy
-    public Individual(Individual other) {
-        this.MyRand = other.MyRand;
+
+    public Individu(Individu other) {
+        this.rand = other.rand;
         this.fitness = other.fitness;
-        this.chromosome = new ArrayList<>(other.chromosome);
+        this.kromosom = new ArrayList<>(other.kromosom);
     }
 
-    public Individual[] doCrossover(Individual other) {
-        Individual child1 = new Individual(this.MyRand);
-        Individual child2 = new Individual(this.MyRand);
+    public Individu[] doCrossover(Individu other) {
+        Individu anak1 = new Individu(this.rand);
+        Individu anak2 = new Individu(this.rand);
 
-        int size = this.chromosome.size();
-        int cutPoint = MyRand.nextInt(size);
+        int size = this.kromosom.size();
+        int cutPoint = rand.nextInt(size);
 
         for (int i = 0; i < size; i++) {
             if (i < cutPoint) {
-                child1.chromosome.add(this.chromosome.get(i));
-                child2.chromosome.add(other.chromosome.get(i));
+                anak1.kromosom.add(this.kromosom.get(i));
+                anak2.kromosom.add(other.kromosom.get(i));
             } else {
-                child1.chromosome.add(other.chromosome.get(i));
-                child2.chromosome.add(this.chromosome.get(i));
+                anak1.kromosom.add(other.kromosom.get(i));
+                anak2.kromosom.add(this.kromosom.get(i));
             }
         }
 
-        return new Individual[]{child1, child2};
+        return new Individu[]{anak1, anak2};
     }
 
     public void doMutation(double mutationRate) {
-        for (int i = 0; i < this.chromosome.size(); i++) {
-            if (MyRand.nextDouble() < mutationRate) {
-                int currentVal = this.chromosome.get(i);
-                this.chromosome.set(i, currentVal == 1 ? 0 : 1);
+        for (int i = 0; i < this.kromosom.size(); i++) {
+            if (rand.nextDouble() < mutationRate) {
+                int currentVal = this.kromosom.get(i);
+                //mutasi lgsg flip bitnya
+                this.kromosom.set(i, currentVal == 1 ? 0 : 1);
             }
         }
     }
 
     public double setFitness() {
-        this.fitness = MosaicGA.hitungFit(this.chromosome);
+        this.fitness = MosaicGA.hitungFit(this.kromosom);
         return this.fitness;
     }
 
@@ -159,135 +160,135 @@ class Individual implements Comparable<Individual> {
     }
 
     @Override
-    public int compareTo(Individual other) {
+    public int compareTo(Individu other) {
         return Double.compare(this.fitness, other.fitness);
     }
 }
 
 
-class Population {
-    public ArrayList<Individual> population;
-    private int maxPopulationSize;
+class Populasi {
+    public ArrayList<Individu> populasi;
+    private int maxPopulasi;
     public double elitismPct;
     public double mutationRate;
     public double crossoverRate;
-    Random MyRand;
+    Random rand;
 
-    public Population(int maxPop, double elitism, double mutRate, double crossRate, Random rand) {
-        this.maxPopulationSize = maxPop;
+    public Populasi(int maxPop, double elitism, double mutRate, double crossRate, Random rand) {
+        this.maxPopulasi = maxPop;
         this.elitismPct = elitism;
         this.mutationRate = mutRate;
         this.crossoverRate = crossRate;
-        this.MyRand = rand;
-        this.population = new ArrayList<>();
+        this.rand = rand;
+        this.populasi = new ArrayList<>();
     }
 
-    public void randomPopulation() {
+    public void randomPopulasi() {
         int genomeSize = MosaicGA.baris * MosaicGA.kolom;
-        for (int i = 0; i < maxPopulationSize; i++) {
-            Individual idv = new Individual(this.MyRand, genomeSize);
-            this.population.add(idv);
+        for (int i = 0; i < maxPopulasi; i++) {
+            Individu idv = new Individu(this.rand, genomeSize);
+            this.populasi.add(idv);
         }
     }
 
-    public void addIndividual(Individual idv) {
-        if (this.population.size() < maxPopulationSize) {
-            this.population.add(idv);
+    public void addIndividu(Individu idv) {
+        if (this.populasi.size() < maxPopulasi) {
+            this.populasi.add(idv);
         }
     }
 
     public void computeAllFitnesses() {
-        for (Individual idv : population) {
+        for (Individu idv : populasi) {
             idv.setFitness();
         }
     }
 
     public boolean isFilled() {
-        return population.size() >= maxPopulationSize;
+        return populasi.size() >= maxPopulasi;
     }
 
-    public Individual getBestIdv() {
-        if (population.isEmpty()) return null;
-        Collections.sort(population);
-        return population.get(0);
+    public Individu getBestIdv() {
+        if (populasi.isEmpty()) return null;
+        Collections.sort(populasi);
+        return populasi.get(0);
     }
 
-    public Population getNewPopulationWElit() {
-        Population newPop = new Population(maxPopulationSize, elitismPct, mutationRate, crossoverRate, MyRand);
+    public Populasi getNewPopulasiWElit() {
+        Populasi newPop = new Populasi(maxPopulasi, elitismPct, mutationRate, crossoverRate, rand);
 
-        Collections.sort(this.population);
-        //Elitism
-        int numElites = (int) (maxPopulationSize * elitismPct);
+        Collections.sort(this.populasi);
+        
+        // elitism
+        int numElites = (int) (maxPopulasi * elitismPct);
         for (int i = 0; i < numElites; i++) {
-            // Gunakan Copy Constructor agar aman
-            newPop.addIndividual(new Individual(this.population.get(i)));
+            newPop.addIndividu(new Individu(this.populasi.get(i)));
         }
 
         while (!newPop.isFilled()) {
-            Individual[] parents = selectParentRoulette();
+            Individu[] parents = selectParentRoulette();
 
-            Individual[] children;
-            // Crossover Check
-            if (MyRand.nextDouble() < crossoverRate) {
+            Individu[] children;
+            if (rand.nextDouble() < crossoverRate) {
+                // Lakukan crossover (jika dapat peluang)
                 children = parents[0].doCrossover(parents[1]);
             } else {
-                // Jika tidak crossover, anak adalah copy dari orang tua
-                children = new Individual[]{
-                        new Individual(parents[0]),
-                        new Individual(parents[1])
+                // Jika tidak crossover, anaknya copy dari orang tua
+                children = new Individu[]{
+                        new Individu(parents[0]),
+                        new Individu(parents[1])
                 };
             }
 
             // Mutasi Child 1 & Add
             if (!newPop.isFilled()) {
                 children[0].doMutation(mutationRate);
-                newPop.addIndividual(children[0]);
+                newPop.addIndividu(children[0]);
             }
 
             // Mutasi Child 2 & Add
             if (!newPop.isFilled()) {
                 children[1].doMutation(mutationRate);
-                newPop.addIndividual(children[1]);
+                newPop.addIndividu(children[1]);
             }
         }
 
         return newPop;
     }
 
-    // Seleksi Roulette Wheel
-    public Individual[] selectParentRoulette() {
-        Individual[] parents = new Individual[2];
+    // Roulette Wheel
+    public Individu[] selectParentRoulette() {
+        Individu[] parents = new Individu[2];
         double totalInverseFitness = 0;
 
-        // Mosaic Fitness: 0 adalah terbaik. Kita butuh inversenya.
-        // Rumus sederhana: 1 / (fitness + epsilon)
-        double[] probs = new double[population.size()];
+        // Fitness terbaik = 0
+        // Rumus invers dari fitness = 1 / (fitness + epsilon)
+        double[] probs = new double[populasi.size()];
 
-        for (int i = 0; i < population.size(); i++) {
-            double fit = population.get(i).getFitness();
+        for (int i = 0; i < populasi.size(); i++) {
+            double fit = populasi.get(i).getFitness();
             double score = 1.0 / (fit + 0.1); // +0.1 menghindari div by zero jika solved
             probs[i] = score;
             totalInverseFitness += score;
         }
 
         // Normalisasi
-        for (int i = 0; i < population.size(); i++) {
+        for (int i = 0; i < populasi.size(); i++) {
             probs[i] = probs[i] / totalInverseFitness;
         }
 
         // Pilih 2 Parent
         for (int p = 0; p < 2; p++) {
-            double r = MyRand.nextDouble();
+            double r = rand.nextDouble();
             double sum = 0;
-            int selectedIdx = population.size() - 1;
-            for (int i = 0; i < population.size(); i++) {
+            int selectedIdx = populasi.size() - 1;
+            for (int i = 0; i < populasi.size(); i++) {
                 sum += probs[i];
                 if (sum >= r) {
                     selectedIdx = i;
                     break;
                 }
             }
-            parents[p] = population.get(selectedIdx);
+            parents[p] = populasi.get(selectedIdx);
         }
         return parents;
     }
@@ -313,20 +314,20 @@ class MosaicAlgoGA {
         this.crossRate = cRate;
     }
 
-    public Individual run() {
+    public Individu run() {
         int generation = 1;
-        Population currentPop = new Population(popSize, elitRate, mutRate, crossRate, rand);
+        Populasi currentPop = new Populasi(popSize, elitRate, mutRate, crossRate, rand);
 
-        // 1. Random Populasi Awal
-        currentPop.randomPopulation();
+        // Random Populasi Awal
+        currentPop.randomPopulasi();
         currentPop.computeAllFitnesses();
 
-        Individual globalBest = currentPop.getBestIdv();
+        Individu globalBest = currentPop.getBestIdv();
 
-        // 2. Loop Generasi
+        // Loop Generasi
         while (generation <= maxGen) {
             // Cek apakah sudah solved (Fitness 0)
-            Individual currentBest = currentPop.getBestIdv();
+            Individu currentBest = currentPop.getBestIdv();
             if (currentBest.getFitness() < globalBest.getFitness()) {
                 globalBest = currentBest;
             }
@@ -342,7 +343,7 @@ class MosaicAlgoGA {
             }
 
             // Buat populasi baru
-            currentPop = currentPop.getNewPopulationWElit();
+            currentPop = currentPop.getNewPopulasiWElit();
             currentPop.computeAllFitnesses();
             generation++;
         }
