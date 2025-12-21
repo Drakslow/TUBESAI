@@ -61,12 +61,12 @@ class Populasi {
         }
 
         while (!newPop.isFilled()) {
-            Individu[] parents = selectParentRoulette();
+            Individu[] parents = rouletteWheel();
 
             Individu[] children;
             if (rand.nextDouble() < crossoverRate) {
                 // Lakukan crossover (jika dapat peluang)
-                children = parents[0].doCrossover(parents[1]);
+                children = parents[0].crossover(parents[1]);
             } else {
                 // Jika tidak crossover, anaknya copy dari orang tua
                 children = new Individu[]{
@@ -77,13 +77,13 @@ class Populasi {
 
             // Mutasi Child 1 & Add
             if (!newPop.isFilled()) {
-                children[0].doMutation(mutationRate);
+                children[0].mutation(mutationRate);
                 newPop.addIndividu(children[0]);
             }
 
             // Mutasi Child 2 & Add
             if (!newPop.isFilled()) {
-                children[1].doMutation(mutationRate);
+                children[1].mutation(mutationRate);
                 newPop.addIndividu(children[1]);
             }
         }
@@ -92,7 +92,7 @@ class Populasi {
     }
 
     // Roulette Wheel
-    public Individu[] selectParentRoulette() {
+    public Individu[] rouletteWheel() {
         Individu[] parents = new Individu[2];
         double totalInverseFitness = 0;
 

@@ -9,7 +9,6 @@ public class MosaicGA {
     // BOARD SPEC
     protected static int baris, kolom;
     protected static int[][] map;
-    // protected static ArrayList<Coordinate> unfixed;
 
     //TODO : Bikin Variasi lain dari fungsi fitness ini
     static double hitungFit(ArrayList<Integer> chromosome) {
@@ -81,10 +80,10 @@ public class MosaicGA {
         System.out.println("\n--- Best Solution Found ---");
         System.out.printf("Final Fitness: %.0f (0 is Solved)\n", bestSolution.getFitness());
 
-        printBoard(bestSolution.kromosom);
+        printBestSolution(bestSolution.kromosom);
     }
 
-    private static void printBoard(ArrayList<Integer> chromosome) {
+    private static void printBestSolution(ArrayList<Integer> chromosome) {
         for (int y = 0; y < baris; y++) {
             for (int x = 0; x < kolom; x++) {
                 int index = y * kolom + x;

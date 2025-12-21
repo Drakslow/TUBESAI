@@ -26,7 +26,7 @@ class Individu implements Comparable<Individu> {
         this.kromosom = new ArrayList<>(other.kromosom);
     }
 
-    public Individu[] doCrossover(Individu other) {
+    public Individu[] crossover(Individu other) {
         Individu anak1 = new Individu(this.rand);
         Individu anak2 = new Individu(this.rand);
 
@@ -46,7 +46,7 @@ class Individu implements Comparable<Individu> {
         return new Individu[]{anak1, anak2};
     }
 
-    public void doMutation(double mutationRate) {
+    public void mutation(double mutationRate) {
         for (int i = 0; i < this.kromosom.size(); i++) {
             if (rand.nextDouble() < mutationRate) {
                 int currentVal = this.kromosom.get(i);
