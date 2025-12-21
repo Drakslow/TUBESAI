@@ -57,7 +57,7 @@ class Individu implements Comparable<Individu> {
     }
 
     public double setFitness() {
-        this.fitness = MosaicGA.hitungFit(this.kromosom);
+        this.fitness = MosaicGA.calcFitness(this.kromosom);
         return this.fitness;
     }
 

@@ -29,19 +29,16 @@ class MosaicAlgoGA {
 
         // Loop Generasi
         while (generation <= maxGen) {
-            // Cek apakah sudah solved (Fitness 0)
             Individu currentBest = currentPop.getBestIdv();
+
             if (currentBest.getFitness() < globalBest.getFitness()) {
                 globalBest = currentBest;
             }
 
-            // Print info per 10 generasi (atau jika solved)
-            if (generation % 10 == 0 || globalBest.getFitness() == 0) {
-                System.out.printf("Gen: %d | Best Fitness: %.1f\n", generation, globalBest.getFitness());
-            }
+            System.out.printf("Gen: %d | Best Fitness: %.1f\n", generation, globalBest.getFitness());
 
             if (globalBest.getFitness() == 0) {
-                System.out.println("Solution found at generation " + generation);
+                System.out.println("Solution founded: " + generation);
                 break;
             }
 
