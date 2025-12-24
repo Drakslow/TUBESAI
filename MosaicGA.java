@@ -11,15 +11,17 @@ public class MosaicGA {
     protected static int[][] map;
 
     //TODO : Bikin Variasi lain dari fungsi fitness ini
-    static double calcFitness(ArrayList<Integer> chromosome) {
+    static double hitungFit(ArrayList<Integer> chromosome) {
         int totalError = 0;
 
         for (int y = 0; y < baris; y++) {
             for (int x = 0; x < kolom; x++) {
                 int clue = map[y][x];
+
                 if (clue == -1) continue;
 
                 int currentBlacks = hitungHitam(chromosome, x, y);
+
                 totalError += Math.abs(currentBlacks - clue);
             }
         }
@@ -72,7 +74,7 @@ public class MosaicGA {
 
         Individu bestSolution = GA.run();
 
-        System.out.println("\n=== Best Solution ===");
+        System.out.println("\n=== Best Solution Found ===");
         System.out.printf("Final Fitness: %.0f\n", bestSolution.getFitness());
 
         printBestSolution(bestSolution.kromosom);

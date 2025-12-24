@@ -23,11 +23,10 @@ class MosaicAlgoGA {
 
         // Random Populasi Awal
         currentPop.randomPopulasi();
-        currentPop.computeAllFitnesses();
+        currentPop.calcAllFitnesses();
 
         Individu globalBest = currentPop.getBestIdv();
 
-        // Loop Generasi
         while (generation <= maxGen) {
             Individu currentBest = currentPop.getBestIdv();
 
@@ -38,13 +37,13 @@ class MosaicAlgoGA {
             System.out.printf("Gen: %d | Best Fitness: %.1f\n", generation, globalBest.getFitness());
 
             if (globalBest.getFitness() == 0) {
-                System.out.println("Solution founded: " + generation);
+                System.out.println("Solution found: " + generation);
                 break;
             }
 
             // Buat populasi baru
             currentPop = currentPop.getNewPopulasiWElit();
-            currentPop.computeAllFitnesses();
+            currentPop.calcAllFitnesses();
             generation++;
         }
 

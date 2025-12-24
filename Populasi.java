@@ -33,7 +33,7 @@ class Populasi {
         }
     }
 
-    public void computeAllFitnesses() {
+    public void calcAllFitnesses() {
         for (Individu idv : populasi) {
             idv.setFitness();
         }
@@ -46,7 +46,6 @@ class Populasi {
     public Individu getBestIdv() {
         if (populasi.isEmpty()) return null;
         Collections.sort(populasi);
-        
         return populasi.get(0);
     }
 
@@ -55,33 +54,32 @@ class Populasi {
 
         Collections.sort(this.populasi);
 
-        // elitism
+        // Elitism
         int numElites = (int) (maxPopulasi * elitismPct);
         for (int i = 0; i < numElites; i++) {
             newPop.addIndividu(new Individu(this.populasi.get(i)));
         }
 
         while (!newPop.isFilled()) {
-            Individu[] parents = doRouletteWheel();
+            Individu[] parents = ParentSelection.rouletteWheel(rand, populasi);
 
             Individu[] children;
             if (rand.nextDouble() < crossoverRate) {
                 children = parents[0].crossover(parents[1]);
             } else {
-                // Jika tidak crossover, copy orang tua ke anak
+                // Jika tidak crossover, anaknya copy dari orang tua
                 children = new Individu[]{
                         new Individu(parents[0]),
                         new Individu(parents[1])
                 };
             }
 
-            // Mutasi Child 1 & Add
+            // Mutasi anak 1 dan 2
             if (!newPop.isFilled()) {
                 children[0].mutation(mutationRate);
                 newPop.addIndividu(children[0]);
             }
 
-            // Mutasi Child 2 & Add
             if (!newPop.isFilled()) {
                 children[1].mutation(mutationRate);
                 newPop.addIndividu(children[1]);
@@ -91,8 +89,4 @@ class Populasi {
         return newPop;
     }
 
-    //PARENT SELECTION
-    public Individu[] doRouletteWheel() {
-        return new Individu[0];
-    }
 }
