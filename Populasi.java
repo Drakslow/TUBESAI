@@ -46,7 +46,6 @@ class Populasi {
     public Individu getBestIdv() {
         if (populasi.isEmpty()) return null;
         Collections.sort(populasi);
-        
         return populasi.get(0);
     }
 
@@ -62,13 +61,14 @@ class Populasi {
         }
 
         while (!newPop.isFilled()) {
-            Individu[] parents = doRouletteWheel();
+            Individu[] parents = rouletteWheel();
 
             Individu[] children;
             if (rand.nextDouble() < crossoverRate) {
+                // Lakukan crossover (jika dapat peluang)
                 children = parents[0].crossover(parents[1]);
             } else {
-                // Jika tidak crossover, copy orang tua ke anak
+                // Jika tidak crossover, anaknya copy dari orang tua
                 children = new Individu[]{
                         new Individu(parents[0]),
                         new Individu(parents[1])
@@ -91,8 +91,41 @@ class Populasi {
         return newPop;
     }
 
-    //PARENT SELECTION
-    public Individu[] doRouletteWheel() {
-        return new Individu[0];
+    // Roulette Wheel
+    public Individu[] rouletteWheel() {
+        Individu[] parents = new Individu[2];
+        double totalInverseFitness = 0;
+
+        // Fitness terbaik = 0
+        // Rumus invers dari fitness = 1 / (fitness + epsilon)
+        double[] probs = new double[populasi.size()];
+
+        for (int i = 0; i < populasi.size(); i++) {
+            double fit = populasi.get(i).getFitness();
+            double score = 1.0 / (fit + 0.1); // +0.1 menghindari div by zero jika solved
+            probs[i] = score;
+            totalInverseFitness += score;
+        }
+
+        // Normalisasi
+        for (int i = 0; i < populasi.size(); i++) {
+            probs[i] = probs[i] / totalInverseFitness;
+        }
+
+        // Pilih 2 Parent
+        for (int p = 0; p < 2; p++) {
+            double r = rand.nextDouble();
+            double sum = 0;
+            int selectedIdx = populasi.size() - 1;
+            for (int i = 0; i < populasi.size(); i++) {
+                sum += probs[i];
+                if (sum >= r) {
+                    selectedIdx = i;
+                    break;
+                }
+            }
+            parents[p] = populasi.get(selectedIdx);
+        }
+        return parents;
     }
 }
