@@ -38,4 +38,32 @@ public class ParentSelection {
         }
         return parents;
     }
+
+    public static Individu[] rankSelection(Random rand, ArrayList<Individu> populasi, int maxPopulasi) {
+        Individu[] parents = new Individu[2];
+        populasi.sort((idv1,idv2) -> idv1.compareTo(idv2));
+
+        int sumRank = 0;
+        for (int i=1;i<=maxPopulasi;i++) sumRank = sumRank + i;
+
+        int top = populasi.size()+1;
+        //calc beParentProbability
+        for (int i=0;i<populasi.size();i++) {
+            ((Individu)populasi.get(i)).beParentProbability = (1.0*top)/sumRank;
+        }
+
+        for (int n = 0;n<2;n++) {
+            int i=-1;
+            double prob = rand.nextDouble();
+            double sum = 0.0;
+
+            do {
+                i++;
+                sum = sum + populasi.get(i).beParentProbability;
+            } while(sum<prob);
+
+            parents[n] = populasi.get(i);
+        }
+        return parents;
+    }
 }

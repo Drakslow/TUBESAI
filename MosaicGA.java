@@ -11,7 +11,7 @@ public class MosaicGA {
     protected static int[][] map;
 
     //TODO : Bikin Variasi lain dari fungsi fitness ini
-    static double hitungFit(ArrayList<Integer> chromosome) {
+    static double calcFitness(ArrayList<Integer> chromosome) {
         int totalError = 0;
 
         for (int y = 0; y < baris; y++) {
