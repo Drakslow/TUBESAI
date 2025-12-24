@@ -49,7 +49,7 @@ public class ParentSelection {
 
         //calc beParentProbability
         for (int i=0;i<populasi.size();i++) {
-            ((Individu)populasi.get(i)).beParentProbability = (double) (i+1)/sumRank;
+            ((Individu)populasi.get(i)).beParentProbability = (double) (populationSize-i)/sumRank;
         }
 
         //cari 2 parent
