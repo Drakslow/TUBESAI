@@ -17,6 +17,8 @@ class Individu implements Comparable<Individu> {
     }
 
     public Individu(Random rand, int size) {
+        this(rand);
+
         for (int i = 0; i < size; i++) {
             this.kromosom.add(rand.nextBoolean() ? 1 : 0);
         }

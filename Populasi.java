@@ -61,8 +61,8 @@ class Populasi {
         }
 
         while (!newPop.isFilled()) {
-            Individu[] parents = ParentSelection.rouletteWheel(rand, populasi);
-            //Individu[] parents = ParentSelection.rankSelection(rand, populasi, maxPopulasi);
+//            Individu[] parents = ParentSelection.rouletteWheel(rand, populasi);
+            Individu[] parents = ParentSelection.rankSelection(rand, populasi);
 
 
             Individu[] children;
