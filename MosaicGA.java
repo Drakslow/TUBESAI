@@ -1,4 +1,3 @@
-import java.io.*;
 import java.util.*;
 
 public class MosaicGA {
@@ -17,11 +16,9 @@ public class MosaicGA {
         for (int y = 0; y < baris; y++) {
             for (int x = 0; x < kolom; x++) {
                 int clue = map[y][x];
-
                 if (clue == -1) continue;
 
                 int currentBlacks = hitungHitam(chromosome, x, y);
-
                 totalError += Math.abs(currentBlacks - clue);
             }
         }
@@ -63,10 +60,7 @@ public class MosaicGA {
 
         map = inputMap;
 
-        System.out.println("--- Mulai GA Mosaic ---");
-        System.out.println("Target: Fitness 0.0");
-
-        // Param pam pam (bisa diganti sesuai kebutuhan testing)
+        // Parameter
         int maxGenerations = 1000;
         int populasiSize = 100;
         double crossoverRate = 0.8;
@@ -77,8 +71,8 @@ public class MosaicGA {
 
         Individu bestSolution = GA.run();
 
-        System.out.println("\n--- Best Solution Found ---");
-        System.out.printf("Final Fitness: %.0f (0 is Solved)\n", bestSolution.getFitness());
+        System.out.println("\n=== Best Solution Found ===");
+        System.out.printf("Final Fitness: %.0f\n", bestSolution.getFitness());
 
         printBestSolution(bestSolution.kromosom);
     }
@@ -88,7 +82,8 @@ public class MosaicGA {
             for (int x = 0; x < kolom; x++) {
                 int index = y * kolom + x;
                 int val = chromosome.get(index);
-                // '#' untuk Hitam, '.' untuk Putih
+                // '#' = Hitam
+                // '.' = Putih
                 System.out.print((val == 1 ? "# " : ". "));
             }
             System.out.println();
