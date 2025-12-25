@@ -72,6 +72,7 @@ public class ParentSelection {
     public static Individu[] tournamentSelection(Random rand, ArrayList<Individu> populasi) {
         Individu[] parents = new Individu[2];
 
+        // Pilih calon parent 10% dari populasi
         int maxRound = populasi.size()/10;
 
         for (int parent = 0; parent < 2; parent++) {
