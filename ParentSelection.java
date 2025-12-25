@@ -41,20 +41,20 @@ public class ParentSelection {
 
     public static Individu[] rankSelection(Random rand, ArrayList<Individu> populasi) {
         Individu[] parents = new Individu[2];
-        populasi.sort((idv1,idv2) -> idv1.compareTo(idv2));
+        populasi.sort((idv1, idv2) -> idv1.compareTo(idv2));
 
         //hitung total pembagi rank
         int populationSize = populasi.size();
         int sumRank = populationSize * (populationSize + 1) / 2;
 
         //calc beParentProbability
-        for (int i=0;i<populasi.size();i++) {
-            ((Individu)populasi.get(i)).beParentProbability = (double) (populationSize-i)/sumRank;
+        for (int i = 0; i < populasi.size(); i++) {
+            ((Individu) populasi.get(i)).beParentProbability = (double) (populationSize - i) / sumRank;
         }
 
         //cari 2 parent
-        for (int n = 0;n<2;n++) {
-            int i=-1;
+        for (int n = 0; n < 2; n++) {
+            int i = -1;
             double prob = rand.nextDouble();
             double sum = 0.0;
 
@@ -62,10 +62,28 @@ public class ParentSelection {
             do {
                 i++;
                 sum = sum + populasi.get(i).beParentProbability;
-            } while(sum<prob);
+            } while (sum < prob);
 
             parents[n] = populasi.get(i);
         }
+        return parents;
+    }
+
+    public static Individu[] tournamentSelection(Random rand, ArrayList<Individu> populasi) {
+        Individu[] parents = new Individu[2];
+
+        int maxRound = populasi.size()/10;
+
+        for (int parent = 0; parent < 2; parent++) {
+            for (int round = 0; round < maxRound; round++) {
+                Individu calonParent = populasi.get(rand.nextInt(populasi.size()));
+
+                if (parents[parent] == null || calonParent.compareTo(parents[parent]) < 0) {
+                    parents[parent] = calonParent;
+                }
+            }
+        }
+
         return parents;
     }
 }
