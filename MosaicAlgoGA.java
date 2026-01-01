@@ -34,7 +34,7 @@ class MosaicAlgoGA {
                 globalBest = currentBest;
             }
 
-            System.out.printf("Gen: %d | Best Fitness: %.1f\n", generation, globalBest.getFitness());
+            System.out.printf("Generasi: %d | Best Fitness: %.1f\n", generation, globalBest.getFitness());
 
             if (globalBest.getFitness() == 0) {
                 System.out.println("Solution found: " + generation);

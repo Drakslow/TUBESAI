@@ -20,7 +20,7 @@ class Populasi {
     }
 
     public void randomPopulasi() {
-        int genomeSize = MosaicGA.baris * MosaicGA.kolom;
+        int genomeSize = MosaicGA.getChromosomeSize();
         for (int i = 0; i < maxPopulasi; i++) {
             Individu idv = new Individu(this.rand, genomeSize);
             this.populasi.add(idv);
