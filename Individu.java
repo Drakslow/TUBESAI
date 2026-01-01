@@ -3,8 +3,8 @@ import java.util.Random;
 
 class Individu implements Comparable<Individu> {
     public double fitness;
-    public Random rand;
-    public double beParentProbability;
+    public Random rand; // random untuk peluang mutasi
+    public double beParentProbability; // Digunakan sementara hanya untuk parent selection (tidak perlu dicopy jika ingin duplikasi)
 
     // Kromosom: 0 = Putih, 1 = Hitam
     public ArrayList<Integer> kromosom;
@@ -35,15 +35,40 @@ class Individu implements Comparable<Individu> {
         Individu anak2 = new Individu(this.rand);
 
         int size = this.kromosom.size();
-        int cutPoint = rand.nextInt(size);
+        int crossoverType = 3; //ubah tipe belah di sini
 
-        for (int i = 0; i < size; i++) {
-            if (i < cutPoint) {
-                anak1.kromosom.add(this.kromosom.get(i));
-                anak2.kromosom.add(other.kromosom.get(i));
-            } else {
-                anak1.kromosom.add(other.kromosom.get(i));
-                anak2.kromosom.add(this.kromosom.get(i));
+        // Untuk single dan two point
+        int firstCutPoint = rand.nextInt(size-1); // dari 0
+        int secondCutPoint = firstCutPoint + rand.nextInt(size - firstCutPoint); // sampai size-1
+
+        if (firstCutPoint == secondCutPoint) {
+            secondCutPoint++;
+        }
+
+        if (crossoverType == 1) {
+            firstCutPoint = 0;
+        }
+
+        if (crossoverType < 3) {
+            for (int i = 0; i < size; i++) {
+                if (i >= firstCutPoint && i < secondCutPoint) { //i < second karena menyisakan ujung untuk crossover
+                    anak1.kromosom.add(this.kromosom.get(i));
+                    anak2.kromosom.add(other.kromosom.get(i));
+                } else {
+                    anak1.kromosom.add(other.kromosom.get(i));
+                    anak2.kromosom.add(this.kromosom.get(i));
+                }
+            }
+        }
+        else { //untuk uniform
+            for (int i = 0; i < size; i++) {
+                if (rand.nextDouble() < 0.5) {
+                    anak1.kromosom.add(this.kromosom.get(i));
+                    anak2.kromosom.add(other.kromosom.get(i));
+                } else {
+                    anak1.kromosom.add(other.kromosom.get(i));
+                    anak2.kromosom.add(this.kromosom.get(i));
+                }
             }
         }
 
