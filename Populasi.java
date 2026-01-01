@@ -55,7 +55,9 @@ class Populasi {
         Collections.sort(this.populasi);
 
         // Elitism
+        // menyalin populasi terbaik (diurut dulu dari paling bagus ke paling buruk) sebanyak numElites
         int numElites = (int) (maxPopulasi * elitismPct);
+
         for (int i = 0; i < numElites; i++) {
             newPop.addIndividu(new Individu(this.populasi.get(i)));
         }
