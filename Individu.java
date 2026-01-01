@@ -35,7 +35,7 @@ class Individu implements Comparable<Individu> {
         Individu anak2 = new Individu(this.rand);
 
         int size = this.kromosom.size();
-        int crossoverType = 3;
+        int crossoverType = 3; //ubah tipe belah di sini
 
         // Untuk single dan two point
         int firstCutPoint = rand.nextInt(size-1); // dari 0
