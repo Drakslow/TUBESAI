@@ -57,12 +57,14 @@ class Individu implements Comparable<Individu> {
             }
         }
         else { //untuk uniform
-            if (rand.nextDouble() < 0.5) {
-                anak1.kromosom.add(this.kromosom.get(i));
-                anak2.kromosom.add(other.kromosom.get(i));
-            } else {
-                anak1.kromosom.add(other.kromosom.get(i));
-                anak2.kromosom.add(this.kromosom.get(i));
+            for (int i = 0; i < size; i++) {
+                if (rand.nextDouble() < 0.5) {
+                    anak1.kromosom.add(this.kromosom.get(i));
+                    anak2.kromosom.add(other.kromosom.get(i));
+                } else {
+                    anak1.kromosom.add(other.kromosom.get(i));
+                    anak2.kromosom.add(this.kromosom.get(i));
+                }
             }
         }
 
