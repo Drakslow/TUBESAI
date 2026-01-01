@@ -4,6 +4,7 @@ import java.util.Random;
 class Individu implements Comparable<Individu> {
     public double fitness;
     public Random rand;
+    public double beParentProbability;
 
     // Kromosom: 0 = Putih, 1 = Hitam
     public ArrayList<Integer> kromosom;
@@ -12,9 +13,12 @@ class Individu implements Comparable<Individu> {
         this.rand = rand;
         this.kromosom = new ArrayList<>();
         this.fitness = Double.MAX_VALUE;
+        this.beParentProbability = 0;
     }
 
     public Individu(Random rand, int size) {
+        this(rand);
+
         for (int i = 0; i < size; i++) {
             this.kromosom.add(rand.nextBoolean() ? 1 : 0);
         }
@@ -57,7 +61,7 @@ class Individu implements Comparable<Individu> {
     }
 
     public double setFitness() {
-        this.fitness = MosaicGA.hitungFit(this.kromosom);
+        this.fitness = MosaicGA.calcFitness(this.kromosom);
         return this.fitness;
     }
 
