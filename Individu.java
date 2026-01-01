@@ -38,8 +38,12 @@ class Individu implements Comparable<Individu> {
         int crossoverType = 3;
 
         // Untuk single dan two point
-        int firstCutPoint = rand.nextInt(size); // dari 0
+        int firstCutPoint = rand.nextInt(size-1); // dari 0
         int secondCutPoint = firstCutPoint + rand.nextInt(size - firstCutPoint); // sampai size-1
+
+        if (firstCutPoint == secondCutPoint) {
+            secondCutPoint++;
+        }
 
         if (crossoverType == 1) {
             firstCutPoint = 0;
@@ -47,7 +51,7 @@ class Individu implements Comparable<Individu> {
 
         if (crossoverType < 3) {
             for (int i = 0; i < size; i++) {
-                if (i >= firstCutPoint && i < secondCutPoint) {
+                if (i >= firstCutPoint && i < secondCutPoint) { //i < second karena menyisakan ujung untuk crossover
                     anak1.kromosom.add(this.kromosom.get(i));
                     anak2.kromosom.add(other.kromosom.get(i));
                 } else {
