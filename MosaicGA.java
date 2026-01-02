@@ -54,10 +54,37 @@ public class MosaicGA {
         for (int y = 0; y < baris; y++) {
             for (int x = 0; x < kolom; x++) {
                 if (fixedBoard[y][x] == null) {
-                    daftarKotakTidakPasti.add(new Koordinat(x, y)); 
+                    if (disekitarClue(x, y)) {
+                        //jika penting, masukin ke kromosom
+                        daftarKotakTidakPasti.add(new Koordinat(x, y));
+                    }else{
+                        // Jika terisolasi (tidak ada guna)
+                        fixedBoard[y][x] = 0;
+                    }
+
                 }
             }
         }
+    }
+
+    private static boolean disekitarClue(int cx, int cy) {
+        // Loop radius 3x3
+        for (int dy = -1; dy <= 1; dy++) {
+            for (int dx = -1; dx <= 1; dx++) {
+                int nx = cx + dx;
+                int ny = cy + dy;
+
+                // Cek batas array agar tidak error
+                if (nx >= 0 && nx < kolom && ny >= 0 && ny < baris) {
+                    // Jika tetangganya adalah ANGKA (bukan -1/kosong),
+                    // brarti cell ini kemasuk g pasti
+                    if (map[ny][nx] != -1) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false; // Tidak ada clue sama sekali di sekitar sel ini (Terisolasi)
     }
 
     private static boolean isCorner(int x, int y) {//method untuk cek apakah koordinat (x,y) di bagian sudut

@@ -74,7 +74,7 @@ public class ParentSelection {
 
         // Pilih calon parent 10% dari populasi
         int maxRound = populasi.size()/10;
-
+//        maxRound = 10;
         for (int parent = 0; parent < 2; parent++) {
             for (int round = 0; round < maxRound; round++) {
                 Individu calonParent = populasi.get(rand.nextInt(populasi.size()));
