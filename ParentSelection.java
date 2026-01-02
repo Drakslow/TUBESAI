@@ -43,13 +43,14 @@ public class ParentSelection {
         Individu[] parents = new Individu[2];
         populasi.sort((idv1, idv2) -> idv1.compareTo(idv2));
 
+        ArrayList<Double> beParentProbability = new ArrayList<>();
+
         //hitung total pembagi rank
-        int populationSize = populasi.size();
-        int sumRank = populationSize * (populationSize + 1) / 2;
+        int sumRank = populasi.size() * (populasi.size() + 1) / 2;
 
         //calc beParentProbability
         for (int i = 0; i < populasi.size(); i++) {
-            ((Individu) populasi.get(i)).beParentProbability = (double) (populationSize - i) / sumRank;
+            beParentProbability.add((double) (i + 1) / sumRank);
         }
 
         //cari 2 parent
@@ -61,7 +62,7 @@ public class ParentSelection {
             //parent diambil jika probabilitasnya >= random
             do {
                 i++;
-                sum = sum + populasi.get(i).beParentProbability;
+                sum = sum + beParentProbability.get(i);
             } while (sum < prob);
 
             parents[n] = populasi.get(i);

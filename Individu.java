@@ -4,7 +4,6 @@ import java.util.Random;
 class Individu implements Comparable<Individu> {
     public double fitness;
     public Random rand; // random untuk peluang mutasi
-    public double beParentProbability; // Digunakan sementara hanya untuk parent selection (tidak perlu dicopy jika ingin duplikasi)
 
     // Kromosom: 0 = Putih, 1 = Hitam
     public ArrayList<Integer> kromosom;
@@ -13,7 +12,6 @@ class Individu implements Comparable<Individu> {
         this.rand = rand;
         this.kromosom = new ArrayList<>();
         this.fitness = Double.MAX_VALUE;
-        this.beParentProbability = 0;
     }
 
     public Individu(Random rand, int size) {
