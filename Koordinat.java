@@ -1,5 +1,5 @@
 //kelas koordinat untuk menyimpan posisi x dan y 
-class Koordinat {
+public class Koordinat {
     private int x;
     private int y;
 

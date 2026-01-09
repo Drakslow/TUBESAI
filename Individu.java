@@ -1,7 +1,7 @@
 import java.util.ArrayList;
 import java.util.Random;
 
-class Individu implements Comparable<Individu> {
+public class Individu implements Comparable<Individu> {
     public double fitness;
     public Random rand; // random untuk peluang mutasi
 
