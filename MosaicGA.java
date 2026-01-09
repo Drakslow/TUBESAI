@@ -3,15 +3,15 @@ import java.util.*;
 
 public class MosaicGA {
     // GA SPEC
-    protected static int seed = 42;
-    protected static final Random rnd = new Random(seed);
+    private static int seed = 42;
+    private static final Random rnd = new Random(seed);
 
     // BOARD SPEC
-    protected static int baris, kolom;
-    protected static int[][] map;
+    private static int baris, kolom;
+    private static int[][] map;
 
-    protected static Integer[][] fixedBoard; //board untuk simpan jawaban yg sudah pasti (0 = putih, 1=hitam, null = belum tau)
-    protected static ArrayList<Koordinat> daftarKotakTidakPasti;//list yang menyimpan koordinat kotak belum pasti
+    private static Integer[][] fixedBoard; //board untuk simpan jawaban yg sudah pasti (0 = putih, 1=hitam, null = belum tau)
+    private static ArrayList<Koordinat> daftarKotakTidakPasti;//list yang menyimpan koordinat kotak belum pasti
     
     // logika heuristik awal untuk mengisi fixedBoard dan daftarKotakTidakPasti
     private static void runHeuristics() {
