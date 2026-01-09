@@ -1,6 +1,6 @@
 import java.util.Random;
 
-class MosaicAlgoGA {
+public class MosaicAlgoGA {
     private int maxGen;
     private int popSize;
     private double mutRate;

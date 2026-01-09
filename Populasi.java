@@ -2,7 +2,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
 
-class Populasi {
+public class Populasi {
     public ArrayList<Individu> populasi;
     private int maxPopulasi;
     public double elitismPct;
