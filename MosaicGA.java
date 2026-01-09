@@ -205,8 +205,25 @@ public class MosaicGA {
         System.out.printf("Final Fitness: %.0f\n", bestSolution.getFitness());
 
         printBestSolution(bestSolution.kromosom);
+
+
     }
 
+    private static void printYgMasihError(int [][]finalBoard){
+        System.out.println("\n=== Yang Masih Error ===");
+        int cnt = 1;
+        for (int y = 0; y < kolom; y++) {
+            for (int x = 0; x < kolom; x++) {
+                if (map[y][x]>-1) {
+                    int countBlack = hitungHitam(finalBoard, x, y);
+                    int clue = map[y][x];
+                    if(clue!=countBlack){
+                        System.out.printf("%d. pos(%d,%d), Nemu = %d, Harusnya = %d\n", cnt++, x, y,countBlack,clue);
+                    }
+                }
+            }
+        }
+    }
     private static void printBestSolution(ArrayList<Integer> chromosome) {
         int[][] finalBoard = new int[baris][kolom];
                 
@@ -233,6 +250,7 @@ public class MosaicGA {
             }
             System.out.println();
         }
+        printYgMasihError(finalBoard);
     }
 
     public static int getChromosomeSize() {//method untuk ambil ukuran kromosom (banyak kotak yang tidak pasti)
