@@ -8,10 +8,10 @@ public class ParentSelection {
 
         // Fitness terbaik = 0
         // Rumus invers dari fitness = 1 / (fitness + epsilon)
-        double[] probs = new double[populasi.size()];
+        double[] probs = new double[populasi.size()]; //probabilitas tiap individu
 
         for (int i = 0; i < populasi.size(); i++) {
-            double fit = populasi.get(i).getFitness();
+            double fit = populasi.get(i).getFitness(); //ambil fitness
             double score = 1.0 / (fit + 0.1); // +0.1 menghindari div by zero jika solved
             probs[i] = score;
             totalInverseFitness += score;
@@ -27,8 +27,10 @@ public class ParentSelection {
             double r = rand.nextDouble();
             double sum = 0;
             int selectedIdx = populasi.size() - 1;
+
             for (int i = 0; i < populasi.size(); i++) {
                 sum += probs[i];
+
                 if (sum >= r) {
                     selectedIdx = i;
                     break;
@@ -48,7 +50,7 @@ public class ParentSelection {
         //hitung total pembagi rank
         int sumRank = populasi.size() * (populasi.size() + 1) / 2;
 
-        //calc beParentProbability
+        //hitung beParentProbability tiap individu
         for (int i = 0; i < populasi.size(); i++) {
             beParentProbability.add((double) (i + 1) / sumRank);
         }
@@ -75,8 +77,9 @@ public class ParentSelection {
 
         // Pilih calon parent 10% dari populasi
         int maxRound = populasi.size()/10;
-//        maxRound = 10;
+
         for (int parent = 0; parent < 2; parent++) {
+            //ambil calon parent sebanyak 10% populasi dan ambil individu dengan fitness terbesar
             for (int round = 0; round < maxRound; round++) {
                 Individu calonParent = populasi.get(rand.nextInt(populasi.size()));
 
