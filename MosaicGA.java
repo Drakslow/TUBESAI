@@ -199,16 +199,45 @@ public class MosaicGA {
 
         //Melakukan preprocessing terhadap
         runHeuristics();
-        
-        MosaicAlgoGA GA = new MosaicAlgoGA(rnd, populasiSize, maxGenerations, mutationRate, elitismRate, crossoverRate);
-        Individu bestSolution = GA.run();
 
+        MosaicAlgoGA GA = new MosaicAlgoGA(rnd, populasiSize, maxGenerations, mutationRate, elitismRate, crossoverRate);
+
+        double mulai = System.currentTimeMillis();
+        Individu bestSolution = GA.run();
+        double akhir = System.currentTimeMillis();
+
+        System.out.println("\n=== Parameters ===");
+        System.out.println("MaxGeneration : "+maxGenerations);
+        System.out.println("PopulasiSize : "+populasiSize);
+        System.out.println("CrossoverRate : "+crossoverRate);
+        System.out.println("ElitismRate : "+elitismRate);
+        System.out.println("MutationRate : "+mutationRate);
+        System.out.println("Seed : "+seed);
+        System.out.println("\n=== Waktu Selesai ===");
+        System.out.println("Time : "+(akhir-mulai)/1000+"(s)");
         System.out.println("\n=== Best Solution Found ===");
         System.out.printf("Final Fitness: %.0f\n", bestSolution.getFitness());
 
         printBestSolution(bestSolution.kromosom);
+
+
     }
 
+    private static void printYgMasihError(int [][]finalBoard){
+        System.out.println("\n=== Yang Masih Error ===");
+        int cnt = 1;
+        for (int y = 0; y < kolom; y++) {
+            for (int x = 0; x < kolom; x++) {
+                if (map[y][x]>-1) {
+                    int countBlack = hitungHitam(finalBoard, x, y);
+                    int clue = map[y][x];
+                    if(clue!=countBlack){
+                        System.out.printf("%2d. pos(%2d,%2d) | Nemu = %d, Harusnya = %d\n", cnt++, x+1, y+1,countBlack,clue);
+                    }
+                }
+            }
+        }
+    }
     private static void printBestSolution(ArrayList<Integer> chromosome) {
         int[][] finalBoard = new int[baris][kolom];
                 
@@ -235,6 +264,7 @@ public class MosaicGA {
             }
             System.out.println();
         }
+        printYgMasihError(finalBoard);
     }
 
     public static int getChromosomeSize() {//method untuk ambil ukuran kromosom (banyak kotak yang tidak pasti)
