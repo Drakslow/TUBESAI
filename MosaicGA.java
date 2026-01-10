@@ -197,10 +197,22 @@ public class MosaicGA {
         double mutationRate = sc.nextDouble();//probabilitas gen pada kromosom mengalami mutasi
 
         runHeuristics();
-        
-        MosaicAlgoGA GA = new MosaicAlgoGA(rnd, populasiSize, maxGenerations, mutationRate, elitismRate, crossoverRate);
-        Individu bestSolution = GA.run();
 
+        MosaicAlgoGA GA = new MosaicAlgoGA(rnd, populasiSize, maxGenerations, mutationRate, elitismRate, crossoverRate);
+
+        double mulai = System.currentTimeMillis();
+        Individu bestSolution = GA.run();
+        double akhir = System.currentTimeMillis();
+
+        System.out.println("\n=== Parameters ===");
+        System.out.println("MaxGeneration : "+maxGenerations);
+        System.out.println("PopulasiSize : "+populasiSize);
+        System.out.println("CrossoverRate : "+crossoverRate);
+        System.out.println("ElitismRate : "+elitismRate);
+        System.out.println("MutationRate : "+mutationRate);
+        System.out.println("Seed : "+seed);
+        System.out.println("\n=== Waktu Selesai ===");
+        System.out.println("Time : "+(akhir-mulai)/1000+"(s)");
         System.out.println("\n=== Best Solution Found ===");
         System.out.printf("Final Fitness: %.0f\n", bestSolution.getFitness());
 
@@ -218,7 +230,7 @@ public class MosaicGA {
                     int countBlack = hitungHitam(finalBoard, x, y);
                     int clue = map[y][x];
                     if(clue!=countBlack){
-                        System.out.printf("%d. pos(%d,%d), Nemu = %d, Harusnya = %d\n", cnt++, x, y,countBlack,clue);
+                        System.out.printf("%2d. pos(%2d,%2d) | Nemu = %d, Harusnya = %d\n", cnt++, x+1, y+1,countBlack,clue);
                     }
                 }
             }
