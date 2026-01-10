@@ -1,4 +1,4 @@
-//kelas koordinat untuk menyimpan posisi x dan y 
+//kelas koordinat untuk menyimpan posisi x dan y pada variabel daftarKotakTidakPasti
 public class Koordinat {
     private int x;
     private int y;
@@ -8,8 +8,7 @@ public class Koordinat {
         this.y = y;
     }
 
-    //getter dan setter 
-
+    //getter dan setter
     public int getX() {
         return x;
     }
