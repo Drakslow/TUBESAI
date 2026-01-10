@@ -2,22 +2,23 @@ import java.io.*;
 import java.util.*;
 
 public class MosaicGA {
-    // GA SPEC
+    // GA SPECIFICATION
     private static int seed = 42;
     private static final Random rnd = new Random(seed);
 
-    // BOARD SPEC
+    // BOARD SPECIFICATION
     private static int baris, kolom;
-    private static int[][] map;
+    private static int[][] map; //menyimpan input berupa clue
 
     private static Integer[][] fixedBoard; //board untuk simpan jawaban yg sudah pasti (0 = putih, 1=hitam, null = belum tau)
     private static ArrayList<Koordinat> daftarKotakTidakPasti;//list yang menyimpan koordinat kotak belum pasti
     
     // logika heuristik awal untuk mengisi fixedBoard dan daftarKotakTidakPasti
-    private static void runHeuristics() {
+    private static void runHeuristics() { //method untuk menerapkan aturan trik permainan
         boolean berubah = true;// flag untuk mengecek apakah ada perubahan pada iterasi terakhir
         while(berubah) { //loop sampai tidak ada perubahan lagi
             berubah = false;
+
             //loop setiap kotak di papan, dan jika ada menyinggung aturan permainan, maka tetangga2nya di set sesuai aturan
             for (int y = 0; y < baris; y++) {
                 for (int x = 0; x < kolom; x++) {
@@ -103,7 +104,7 @@ public class MosaicGA {
         }
     }
 
-    private static boolean setNeighbors(int posisiX, int posisiY, int warna) {
+    private static boolean setNeighbors(int posisiX, int posisiY, int warna) { //method ini memasukkan hitam/putih ke dalam sebuah kotak yang sudah pasti
         boolean perubahan = false;
         //loop tetangga termasuk dirinya sendiri (3x3)
         for (int cekY = -1; cekY <= 1; cekY++) {
@@ -196,6 +197,7 @@ public class MosaicGA {
         double elitismRate = sc.nextDouble();// presentase individu terbaik akan disimpan ke generasi berikutnya
         double mutationRate = sc.nextDouble();//probabilitas gen pada kromosom mengalami mutasi
 
+        //Melakukan preprocessing terhadap
         runHeuristics();
         
         MosaicAlgoGA GA = new MosaicAlgoGA(rnd, populasiSize, maxGenerations, mutationRate, elitismRate, crossoverRate);
