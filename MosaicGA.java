@@ -12,7 +12,14 @@ public class MosaicGA {
 
     private static Integer[][] fixedBoard; //board untuk simpan jawaban yg sudah pasti (0 = putih, 1=hitam, null = belum tau)
     private static ArrayList<Koordinat> daftarKotakTidakPasti;//list yang menyimpan koordinat kotak belum pasti
-    
+
+    //PenyimpanRataRata
+    static double generasiBestF[] = new double[1000];
+    static double minimumFitness = Double.MAX_VALUE;
+    static double waktuPerInput[] = new double[20];
+    static double generasiPerInput[] = new double[20];
+    static double bestFPerGenerasi[] = new double[20];
+
     // logika heuristik awal untuk mengisi fixedBoard dan daftarKotakTidakPasti
     private static void runHeuristics() { //method untuk menerapkan aturan trik permainan
         boolean berubah = true;// flag untuk mengecek apakah ada perubahan pada iterasi terakhir
@@ -176,51 +183,64 @@ public class MosaicGA {
     }
 
     public static void main(String[] args) throws FileNotFoundException {
-        File file = new File("input.txt");
-        Scanner sc = new Scanner(file);
+        for (int input = 1; input < 21 ; input++) {
+            PrintStream out = new PrintStream(new File(String.format("./Input/10x10/OutputTest%d.txt",input)));
+            System.setOut(out);
+            seed = 42;
+            File file = new File(String.format("./Input/10x10/input%d.txt",input));
+            Scanner sc = new Scanner(file);
 
-        baris = sc.nextInt();
-        kolom = sc.nextInt();
-        map = new int[baris][kolom];
-        fixedBoard = new Integer[baris][kolom];
+            baris = sc.nextInt();
+            kolom = sc.nextInt();
+            map = new int[baris][kolom];
+            fixedBoard = new Integer[baris][kolom];
 
-        for (int i = 0; i < baris; i++) {
-            for (int j = 0; j < kolom; j++) {
-                map[i][j] = sc.nextInt();
+            for (int i = 0; i < baris; i++) {
+                for (int j = 0; j < kolom; j++) {
+                    map[i][j] = sc.nextInt();
+                }
             }
+
+            //parameter (baca dari file juga)
+//            int maxGenerations = sc.nextInt();// maksimal generasi yang akan dimiliki oleh GA
+//            int populasiSize = sc.nextInt(); // banyak individu dalam 1 populasi
+//            double crossoverRate = sc.nextDouble();// probabilitas kemungkinan parents melakukan crossover
+//            double elitismRate = sc.nextDouble();// presentase individu terbaik akan disimpan ke generasi berikutnya
+//            double mutationRate = sc.nextDouble();//probabilitas gen pada kromosom mengalami mutasi
+
+            int maxGenerations = 1000;// maksimal generasi yang akan dimiliki oleh GA
+            int populasiSize = 50; // banyak individu dalam 1 populasi
+            double crossoverRate = 0.6;// probabilitas kemungkinan parents melakukan crossover
+            double elitismRate = 0.1;// presentase individu terbaik akan disimpan ke generasi berikutnya
+            double mutationRate = 0.001;//probabilitas gen pada kromosom mengalami mutasi
+
+            //Melakukan preprocessing terhadap
+            runHeuristics();
+
+            MosaicAlgoGA GA = new MosaicAlgoGA(rnd, populasiSize, maxGenerations, mutationRate, elitismRate, crossoverRate);
+
+            long mulai = System.currentTimeMillis();
+            Individu bestSolution = GA.run();
+            long akhir = System.currentTimeMillis();
+
+            //Simpan Eksperimen
+            waktuPerInput[input-1]=(akhir-mulai)/1000;
+            bestFPerGenerasi[input-1]=bestSolution.getFitness();
+
+            System.out.println("\n=== Parameters ===");
+            System.out.println("MaxGeneration : "+maxGenerations);
+            System.out.println("PopulasiSize : "+populasiSize);
+            System.out.println("CrossoverRate : "+crossoverRate);
+            System.out.println("ElitismRate : "+elitismRate);
+            System.out.println("MutationRate : "+mutationRate);
+            System.out.println("Seed : "+seed);
+            System.out.println("\n=== Waktu Selesai ===");
+            System.out.println("Time : "+(akhir-mulai)/1000+"(s)");
+            System.out.println("\n=== Best Solution Found ===");
+            System.out.printf("Final Fitness: %.0f\n", bestSolution.getFitness());
+
+            printBestSolution(bestSolution.kromosom);
         }
-
-        //parameter (baca dari file juga)
-        int maxGenerations = sc.nextInt();// maksimal generasi yang akan dimiliki oleh GA 
-        int populasiSize = sc.nextInt(); // banyak individu dalam 1 populasi 
-        double crossoverRate = sc.nextDouble();// probabilitas kemungkinan parents melakukan crossover
-        double elitismRate = sc.nextDouble();// presentase individu terbaik akan disimpan ke generasi berikutnya
-        double mutationRate = sc.nextDouble();//probabilitas gen pada kromosom mengalami mutasi
-
-        //Melakukan preprocessing terhadap
-        runHeuristics();
-
-        MosaicAlgoGA GA = new MosaicAlgoGA(rnd, populasiSize, maxGenerations, mutationRate, elitismRate, crossoverRate);
-
-        long mulai = System.currentTimeMillis();
-        Individu bestSolution = GA.run();
-        long akhir = System.currentTimeMillis();
-
-        System.out.println("\n=== Parameters ===");
-        System.out.println("MaxGeneration : "+maxGenerations);
-        System.out.println("PopulasiSize : "+populasiSize);
-        System.out.println("CrossoverRate : "+crossoverRate);
-        System.out.println("ElitismRate : "+elitismRate);
-        System.out.println("MutationRate : "+mutationRate);
-        System.out.println("Seed : "+seed);
-        System.out.println("\n=== Waktu Selesai ===");
-        System.out.println("Time : "+(akhir-mulai)/1000+"(s)");
-        System.out.println("\n=== Best Solution Found ===");
-        System.out.printf("Final Fitness: %.0f\n", bestSolution.getFitness());
-
-        printBestSolution(bestSolution.kromosom);
-
-
     }
 
     private static void printYgMasihError(int [][]finalBoard){

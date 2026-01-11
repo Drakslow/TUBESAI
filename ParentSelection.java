@@ -1,7 +1,21 @@
 import java.util.ArrayList;
 import java.util.Random;
 
+/**
+ * Kelas static yang menyediakan 3 metode parent selection.
+ * Metode parent selection yang disediakan adalah Roulette Wheel Selection, Rank Selection, dan Tournament Selection
+ *
+ * @author Owen Lianggara
+ * @author Andrew Kevin Alexander
+ */
 public class ParentSelection {
+    /**
+     * Metode Roulette Wheel Selection memilih 2 parent dengan bergantung pada fitness
+     *
+     * @param rand objek random dengan seed
+     * @param populasi menyimpan Individu di ArrayList
+     * @return parents, yaitu array of 2 Individu
+     */
     public static Individu[] rouletteWheel(Random rand, ArrayList<Individu> populasi) {
         Individu[] parents = new Individu[2];
         double totalInverseFitness = 0;
@@ -41,6 +55,13 @@ public class ParentSelection {
         return parents;
     }
 
+    /**
+     * Metode Rank Selection memilih 2 parent dengan mengurutkan peringkat dari fitness
+     *
+     * @param rand objek random dengan seed
+     * @param populasi menyimpan Individu di ArrayList
+     * @return parents, yaitu array of 2 Individu
+     */
     public static Individu[] rankSelection(Random rand, ArrayList<Individu> populasi) {
         Individu[] parents = new Individu[2];
         populasi.sort((idv1, idv2) -> idv1.compareTo(idv2));
@@ -52,7 +73,7 @@ public class ParentSelection {
 
         //hitung beParentProbability tiap individu
         for (int i = 0; i < populasi.size(); i++) {
-            beParentProbability.add((double) (i + 1) / sumRank);
+            beParentProbability.add((double) (populasi.size() - i) / sumRank);
         }
 
         //cari 2 parent
@@ -72,6 +93,13 @@ public class ParentSelection {
         return parents;
     }
 
+    /**
+     * Metode Tournamen Selection memilih 2 parent dengan memilih 10% calon parent dari populasi dan mengambil fitness tertinggi
+     *
+     * @param rand objek random dengan seed
+     * @param populasi menyimpan Individu di ArrayList
+     * @return parents, yaitu array of 2 Individu
+     */
     public static Individu[] tournamentSelection(Random rand, ArrayList<Individu> populasi) {
         Individu[] parents = new Individu[2];
 
