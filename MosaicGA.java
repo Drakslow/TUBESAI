@@ -44,6 +44,8 @@ public class MosaicGA {
      * logika heuristik awal untuk mengisi fixedBoard dan daftarKotakTidakPasti dengan menerapkan trik bermain
      */
     private static void runHeuristics() { //method untuk menerapkan aturan trik permainan
+        //TODO: kenapa harus pakai while? cukup sekali loop tidak bisa?
+
         boolean berubah = true;// flag untuk mengecek apakah ada perubahan pada iterasi terakhir
         while(berubah) { //loop sampai tidak ada perubahan lagi
             berubah = false;
