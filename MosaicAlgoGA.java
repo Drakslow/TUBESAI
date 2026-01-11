@@ -1,13 +1,52 @@
 import java.util.Random;
 
+/**
+ * Menjalankan algoritma genetika untuk Mosaic Puzzle
+ *
+ * @author Owen Lianggara
+ * @author Andrew Kevin Alexander
+ */
 public class MosaicAlgoGA {
+    /**
+     * maksimal generasi
+     */
     private int maxGen;
+
+    /**
+     * ukuran populasi
+     */
     private int popSize;
+
+    /**
+     * mutation rate
+     */
     private double mutRate;
+
+    /**
+     * elitism rate
+     */
     private double elitRate;
+
+    /**
+     * crossover rate
+     */
     private double crossRate;
+
+    /**
+     * random dengan seed
+     */
     private Random rand;
 
+    /**
+     * Construct genetic algorithm baru
+     *
+     * @param r random dengan seed
+     * @param pSize ukuran populasi
+     * @param maxG maksimal generasi
+     * @param mRate mutation rate
+     * @param eRate elitism rate
+     * @param cRate crossover rate
+     */
     public MosaicAlgoGA(Random r, int pSize, int maxG, double mRate, double eRate, double cRate) {
         this.rand = r;
         this.popSize = pSize;
@@ -17,6 +56,13 @@ public class MosaicAlgoGA {
         this.crossRate = cRate;
     }
 
+    /**
+     * Menjalankan algoritma genetika.
+     * Di awali dengan random populasi baru, kemudian loop untuk mengembangkan populasi sebanyak maksimal generasi,
+     * Berhenti ketika sudah mencapai batas maksimal generasi atau menemukan solusi dengan fitness 0 (terbaik)
+     *
+     * @return individu dengan solusi terbaik
+     */
     public Individu run() {
         int generation = 1;
 
