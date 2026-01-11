@@ -34,7 +34,7 @@ public class Individu implements Comparable<Individu> {
     public Individu(Random rand) {
         this.rand = rand;
         this.kromosom = new ArrayList<>();
-        this.fitness = Double.MAX_VALUE;
+        this.fitness = 0.0; //inisialisasi fitness dari 0, karena yang diincar adalah 1.0 (semakin besar semakin baik, dengan range 0.0 - 1.0)
     }
 
     /**
@@ -161,10 +161,10 @@ public class Individu implements Comparable<Individu> {
     /**
      *
      * @param other object Individu yang ingin di compare.
-     * @return hasil integer dari komparasi untuk mengurutkan dari kecil ke besar
+     * @return hasil integer dari komparasi untuk mengurutkan dari besar ke kecil
      */
     @Override
     public int compareTo(Individu other) {
-        return Double.compare(this.fitness, other.fitness);
+        return Double.compare(other.fitness, this.fitness);
     }
 }

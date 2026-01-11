@@ -39,6 +39,11 @@ public class MosaicGA {
      * list yang menyimpan koordinat kotak belum pasti
      */
     private static ArrayList<Koordinat> daftarKotakTidakPasti;
+    
+    /**
+     * variable untuk menyimpan total kemungkinan maksimal eror yang dapat terjadi
+     */
+    private static double probMaxError;
 
     /**
      * logika heuristik awal untuk mengisi fixedBoard dan daftarKotakTidakPasti dengan menerapkan trik bermain
@@ -185,6 +190,35 @@ public class MosaicGA {
     }
 
     /**
+     * Menghitung total kemungkinan maksimal eror yang dapat terjadi
+     */
+    public static int hitungMaxError() {
+        int totalMax = 0;
+
+        // Loop sebanyak baris dan kolom yang dimiliki peta (setiap cell diperiksa)
+        for (int y = 0; y < baris; y++) {
+            for (int x = 0; x < kolom; x++) {
+                if (map[y][x] != -1) { // Pengecekan hanya dilakukan untuk koordinat/cell yang ada clue (angka selain -1)
+
+                    // Cek apakah clue berada di corner (Pojok)
+                    if (isCorner(x, y)) {
+                        totalMax += 4;
+                    }
+                    // Cek apakah clue berada di edge (Tepi, tapi bukan pojok)
+                    else if (isEdge(x, y)) {
+                        totalMax += 6;
+                    }
+                    // Sisanya berada di middle (Tengah)
+                    else {
+                        totalMax += 9;
+                    }
+                }
+            }
+        }
+        return totalMax;
+    }
+
+    /**
      * Menghitung sebuah fitness kromosom tanpa melibatkan objek Individu
      *
      * @param chromosome menyimpan daftar kotak tidak pasti berupa koordinat
@@ -210,17 +244,36 @@ public class MosaicGA {
             }
         }
 
-        //hitung banyak eror nya (kotak hitam tidak sesuai clue)
+        // //hitung banyak eror nya (kotak hitam tidak sesuai clue)
+        // int totalError = 0;
+        // for (int y = 0; y < baris; y++) {
+        //     for (int x = 0; x < kolom; x++) {
+        //         int clue = map[y][x]; //ambil value dr kotak nya
+        //         if (clue==-1) continue;//kalo isinya -1 lanjut aja (di skip)
+        //         int currentBlacks = hitungHitam(currentBoard, x, y); //ambil banyak hitam dari kotak clue sekarang
+        //         totalError += Math.abs(currentBlacks - clue); //cek berapa banyak selisih antara hitam sekarang dan clue
+        //     }
+        // }
+        // return (double) ((1 / totalError) + 1);
+
+        //inisialisasi total error yg ada saat ini dengan 0
         int totalError = 0;
+
+        //loop untuk menghitung fitness nya
         for (int y = 0; y < baris; y++) {
             for (int x = 0; x < kolom; x++) {
                 int clue = map[y][x]; //ambil value dr kotak nya
-                if (clue==-1) continue;//kalo isinya -1 lanjut aja (di skip)
+                if (clue == -1) continue; //kalo isinya -1 lanjut aja (di skip)
+                
                 int currentBlacks = hitungHitam(currentBoard, x, y); //ambil banyak hitam dari kotak clue sekarang
                 totalError += Math.abs(currentBlacks - clue); //cek berapa banyak selisih antara hitam sekarang dan clue
             }
         }
-        return (double) totalError;
+        //hitung fitness berdasarkan total error (semakin besar fitnessnya semakin baik)
+        double fitness = (probMaxError - (double)totalError) / probMaxError;
+
+        // Jaga jaga agar tidak return hasil negatif
+        return Math.max(0.0, fitness);
     }
 
     /**
@@ -256,7 +309,9 @@ public class MosaicGA {
      * @throws FileNotFoundException throw file input yang tidak ditemukan
      */
     public static void main(String[] args) throws FileNotFoundException {
-        File file = new File("input.txt");
+        // File file = new File("Input/10x10Easy_3_283_336.txt");
+        File file = new File("Input/10x10Easy_3_283_336.txt");
+
         Scanner sc = new Scanner(file);
 
         baris = sc.nextInt();
@@ -279,6 +334,9 @@ public class MosaicGA {
 
         //Melakukan preprocessing
         runHeuristics();
+        
+        // Memulai perhitungan total kemungkinan maksimal eror yang dapat terjadi sekaligus menyimpannya di variabel global 
+        probMaxError = (double) hitungMaxError();
 
         MosaicAlgoGA GA = new MosaicAlgoGA(rnd, populasiSize, maxGenerations, mutationRate, elitismRate, crossoverRate);
 
@@ -296,7 +354,7 @@ public class MosaicGA {
         System.out.println("\n=== Waktu Selesai ===");
         System.out.println("Time : "+(akhir-mulai)/1000+"(s)");
         System.out.println("\n=== Best Solution Found ===");
-        System.out.printf("Final Fitness: %.0f\n", bestSolution.getFitness());
+        System.out.printf("Final Fitness: %.5f\n", bestSolution.getFitness());
 
         printBestSolution(bestSolution.kromosom);
 

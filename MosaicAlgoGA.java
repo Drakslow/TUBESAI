@@ -59,7 +59,7 @@ public class MosaicAlgoGA {
     /**
      * Menjalankan algoritma genetika.
      * Di awali dengan random populasi baru, kemudian loop untuk mengembangkan populasi sebanyak maksimal generasi,
-     * Berhenti ketika sudah mencapai batas maksimal generasi atau menemukan solusi dengan fitness 0 (terbaik)
+     * Berhenti ketika sudah mencapai batas maksimal generasi atau menemukan solusi dengan fitness 1.0 (terbaik)
      *
      * @return individu dengan solusi terbaik
      */
@@ -81,13 +81,13 @@ public class MosaicAlgoGA {
             //individu terbaik di generasi saat ini
             Individu currentBest = currentPop.getBestIdv();
 
-            if (currentBest.getFitness() < globalBest.getFitness()) { //set generasi terbaik dalam seluruh generasi
+            if (currentBest.getFitness() > globalBest.getFitness()) { //set generasi terbaik dalam seluruh generasi
                 globalBest = currentBest;
             }
 
-            System.out.printf("Generasi: %d | Best Fitness: %.1f\n", generation, globalBest.getFitness());
+            System.out.printf("Generasi: %d | Best Fitness: %.5f\n", generation, globalBest.getFitness());
 
-            if (globalBest.getFitness() == 0) {
+            if (globalBest.getFitness() == 1.0) {
                 System.out.println("Solution found: " + generation);
                 break;
             }
