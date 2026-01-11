@@ -2,14 +2,53 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
 
+/**
+ * Menyimpan informasi kumpulan individu.
+ * Informasi tersebut berupa kumpulan individu, maksimal populasi, elitism rate, mutation rate, dan crossover rate
+ *
+ * @author Owen Lianggara
+ * @author Andrew Kevin Alexander
+ */
 public class Populasi {
+    /**
+     * Menyimpan kumpulan individu
+     */
     public ArrayList<Individu> populasi;
+
+    /**
+     * batas maksimal individu dalam sebuah populasi
+     */
     private int maxPopulasi;
+
+    /**
+     * elitism rate
+     */
     public double elitismPct;
+
+    /**
+     * mutation rate
+     */
     public double mutationRate;
+
+    /**
+     * crossover rate
+     */
     public double crossoverRate;
+
+    /**
+     * random dengan seed yang akan diberikan sebagai parameter
+     */
     Random rand;
 
+    /**
+     * Construct Populasi baru
+     *
+     * @param maxPop maksimum individu dalam sebuah populasi
+     * @param elitism elitism rate
+     * @param mutRate mutation rate
+     * @param crossRate crossover rate
+     * @param rand random dengan seed
+     */
     public Populasi(int maxPop, double elitism, double mutRate, double crossRate, Random rand) {
         this.maxPopulasi = maxPop;
         this.elitismPct = elitism;
@@ -19,6 +58,9 @@ public class Populasi {
         this.populasi = new ArrayList<>();
     }
 
+    /**
+     * Membuat populasi di mana setiap individu memiliki gen yang ditentukan secara random
+     */
     public void randomPopulasi() {
         //jumlah gen
         int genomeSize = MosaicGA.getChromosomeSize();
@@ -30,28 +72,52 @@ public class Populasi {
         }
     }
 
+    /**
+     * Menambahkan individu pada populasi
+     *
+     * @param idv objek individu yang ingin dimasukkan ke populasi
+     */
     public void addIndividu(Individu idv) { //tambahkan individu ke dalam populasi
         if (this.populasi.size() < maxPopulasi) {
             this.populasi.add(idv);
         }
     }
 
+    /**
+     * Menghitung semua fitness individu pada populasi
+     */
     public void calcAllFitnesses() { //hitung fitness dan set ke dalam atribut fitness individu
         for (Individu idv : populasi) {
             idv.setFitness();
         }
     }
 
+    /**
+     * Memeriksa apakah populasi sudah penuh atau belum.
+     *
+     * @return Belum penuh: False, sudah penuh: True
+     */
     public boolean isFilled() { //cek apakah populasi sudah penuh atau belum
         return populasi.size() >= maxPopulasi;
     }
 
+    /**
+     * Mengambil individu terbaik pada populasi.
+     * Mengurutkan individu berdasarkan fitness pada populasi dan ambil individu yang pertama
+     *
+     * @return individu dengan fitness terbaik (terkecil)
+     */
     public Individu getBestIdv() { //ambil individu terbaik dalam populasi ini
         if (populasi.isEmpty()) return null;
         Collections.sort(populasi);
         return populasi.get(0);
     }
 
+    /**
+     * Membuat populasi baru dengan menerapkan elitism
+     *
+     * @return populasi baru
+     */
     public Populasi getNewPopulasiWElit() {
         //buat populasi baru
         Populasi newPop = new Populasi(maxPopulasi, elitismPct, mutationRate, crossoverRate, rand);
