@@ -1,19 +1,49 @@
 import java.util.ArrayList;
 import java.util.Random;
 
+/**
+ * Menyimpan informasi sebuah kromosom.
+ * Informasi tersebut berupa kromosom, fitness, dan nilai mutasi
+ *
+ * @author Owen Lianggara
+ * @author Andrew Kevin Alexander
+ */
 public class Individu implements Comparable<Individu> {
+    /**
+     * Menyimpan fitness sebuah individu
+     */
     public double fitness;
-    public Random rand; // random untuk peluang mutasi
 
-    // Kromosom: 0 = Putih, 1 = Hitam
+    /**
+     * Random menyimpan seed
+     * Random untuk membuat kromosom awal, crossover, dan mutasi
+     */
+    public Random rand;
+
+    /**
+     * Simpan gen di dalam kromosom.
+     * Kromosom: 0 = Putih, 1 = Hitam
+     */
     public ArrayList<Integer> kromosom;
 
+    /**
+     * Construct individu baru dengan nilai peluang mutasi random
+     *
+     * @param rand objek random dengan seed
+     */
     public Individu(Random rand) {
         this.rand = rand;
         this.kromosom = new ArrayList<>();
         this.fitness = Double.MAX_VALUE;
     }
 
+    /**
+     * Construct individu baru dengan seed random dan ukuran kromosom
+     * setiap gen dirandomisasi untuk menentukan isi gen 0 atau 1
+     *
+     * @param rand objek random dengan seed
+     * @param size ukuran kromosom atau banyak gen dari sebuah kromosom
+     */
     public Individu(Random rand, int size) {
         this(rand);
 
@@ -22,12 +52,23 @@ public class Individu implements Comparable<Individu> {
         }
     }
 
+    /**
+     * Construct individu baru dengan menyalin individu lain
+     *
+     * @param other objek Individu yang menyimpan informasi individu lain
+     */
     public Individu(Individu other) {
         this.rand = other.rand;
         this.fitness = other.fitness;
         this.kromosom = new ArrayList<>(other.kromosom);
     }
 
+    /**
+     * Melakukan crossover dengan 3 tipe, yaitu single-point, two-point, dan uniform crossover
+     *
+     * @param other objek Individu yang menyimpan informasi individu lain
+     * @return 2 anak hasil crossover yang disimpan dalam array of Individu
+     */
     public Individu[] crossover(Individu other) {
         //buat 2 children baru
         Individu anak1 = new Individu(this.rand);
@@ -81,6 +122,11 @@ public class Individu implements Comparable<Individu> {
         return new Individu[]{anak1, anak2};
     }
 
+    /**
+     * Melakukan mutasi untuk pada individu
+     *
+     * @param mutationRate peluang mutasi untuk setiap gen
+     */
     public void mutation(double mutationRate) {
         //lakukan mutasi di setiap gen
         for (int i = 0; i < this.kromosom.size(); i++) {
@@ -92,16 +138,31 @@ public class Individu implements Comparable<Individu> {
         }
     }
 
+    /**
+     * Menghitung fitness dari pada individu
+     *
+     * @return value fitness pada individu
+     */
     public double setFitness() {
         //set fitness untuk individu ini
         this.fitness = MosaicGA.calcFitness(this.kromosom);
         return this.fitness;
     }
 
+    /**
+     * Return fitness dari pada individu
+     *
+     * @return value fitness pada individu
+     */
     public double getFitness() {
         return this.fitness;
     }
 
+    /**
+     *
+     * @param other object Individu yang ingin di compare.
+     * @return hasil integer dari komparasi untuk mengurutkan dari kecil ke besar
+     */
     @Override
     public int compareTo(Individu other) {
         return Double.compare(this.fitness, other.fitness);

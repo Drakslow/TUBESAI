@@ -1,20 +1,51 @@
 import java.io.*;
 import java.util.*;
 
+/**
+ * Main Class.
+ * Input board dan parameter untuk genetic algorithm.
+ * Melakukan preprocessing pada input sebelum diproses oleh algoritma genetika
+ *
+ * @author Owen Lianggara
+ * @author Andrew Kevin Alexander
+ */
 public class MosaicGA {
-    // GA SPECIFICATION
+    /**
+     * seed untuk random yang akan menjadi parameter constructor di beberapa kelas
+     */
     private static int seed = 42;
+
+    /**
+     * random yang akan menjadi parameter constructor di beberapa kelas
+     */
     private static final Random rnd = new Random(seed);
 
-    // BOARD SPECIFICATION
+    /**
+     * ukuran baris dan kolom pada board
+     */
     private static int baris, kolom;
-    private static int[][] map; //menyimpan input berupa clue
 
-    private static Integer[][] fixedBoard; //board untuk simpan jawaban yg sudah pasti (0 = putih, 1=hitam, null = belum tau)
-    private static ArrayList<Koordinat> daftarKotakTidakPasti;//list yang menyimpan koordinat kotak belum pasti
-    
-    // logika heuristik awal untuk mengisi fixedBoard dan daftarKotakTidakPasti
+    /**
+     * Menyimpan input berupa clue
+     */
+    private static int[][] map;
+
+    /**
+     * board untuk simpan jawaban yg sudah pasti (0 = putih, 1=hitam, null = tidak diketahui)
+     */
+    private static Integer[][] fixedBoard;
+
+    /**
+     * list yang menyimpan koordinat kotak belum pasti
+     */
+    private static ArrayList<Koordinat> daftarKotakTidakPasti;
+
+    /**
+     * logika heuristik awal untuk mengisi fixedBoard dan daftarKotakTidakPasti dengan menerapkan trik bermain
+     */
     private static void runHeuristics() { //method untuk menerapkan aturan trik permainan
+        //TODO: kenapa harus pakai while? cukup sekali loop tidak bisa?
+
         boolean berubah = true;// flag untuk mengecek apakah ada perubahan pada iterasi terakhir
         while(berubah) { //loop sampai tidak ada perubahan lagi
             berubah = false;
@@ -68,6 +99,14 @@ public class MosaicGA {
         }
     }
 
+    /**
+     * Memeriksa apakah sebuah kotak merupakan kotak yang sudah pasti atau bukan
+     *
+     * @param cx center x, koordinat x sebuah kotak
+     * @param cy center y, koordinat y sebuah kotak
+     * @return ada clue di tetangga: True, tidak ada clue di tetangga: False
+     */
+    //TODO: kotak sendiri kenapa diperiksa juga?
     private static boolean disekitarClue(int cx, int cy) {
         // Loop radius 3x3
         for (int dy = -1; dy <= 1; dy++) {
@@ -88,6 +127,13 @@ public class MosaicGA {
         return false; // Tidak ada clue sama sekali di sekitar sel ini (Terisolasi)
     }
 
+    /**
+     * Memeriksa apakah koordinat kotak tersebut berada di sisi board
+     *
+     * @param x koordinat x sebuah kotak
+     * @param y koordinat y sebuah kotak
+     * @return berada di sisi: True, tidak berada di sisi: False
+     */
     private static boolean isCorner(int x, int y) {//method untuk cek apakah koordinat (x,y) di bagian sudut
         if((x==0 || x==kolom-1) && (y==0 || y==baris-1)) {
             return true;
@@ -96,6 +142,13 @@ public class MosaicGA {
         }
     }
 
+    /**
+     * Memeriksa apakah koordinat kotak tersebut berada di sudut board
+     *
+     * @param x koordinat x sebuah kotak
+     * @param y koordinat y sebuah kotak
+     * @return berada di sudut: True, tidak berada di sudut: False
+     */
     private static boolean isEdge(int x, int y) {//method untuk cek apakah koordinat (x,y) di bagian sisi
         if( (!isCorner(x, y) ) && ( (x==0 || x==kolom-1) || (y==0 || y==baris-1) ) ) {
             return true;
@@ -104,7 +157,15 @@ public class MosaicGA {
         }
     }
 
-    private static boolean setNeighbors(int posisiX, int posisiY, int warna) { //method ini memasukkan hitam/putih ke dalam sebuah kotak yang sudah pasti
+    /**
+     * Memasukkan hitam/putih ke dalam sebuah kotak yang sudah pasti
+     *
+     * @param posisiX koordinat x sebuah kotak
+     * @param posisiY koordinat y sebuah kotak
+     * @param warna warna pada kotak, 0 (putih) atau 1 (hitam)
+     * @return menambahkan warna di tetangg: True, tidak menambahkan warna di tetangg: False
+     */
+    private static boolean setNeighbors(int posisiX, int posisiY, int warna) {
         boolean perubahan = false;
         //loop tetangga termasuk dirinya sendiri (3x3)
         for (int cekY = -1; cekY <= 1; cekY++) {
@@ -123,6 +184,12 @@ public class MosaicGA {
         return perubahan;
     }
 
+    /**
+     * Menghitung sebuah fitness kromosom tanpa melibatkan objek Individu
+     *
+     * @param chromosome menyimpan daftar kotak tidak pasti berupa koordinat
+     * @return fitness dari sebuah kromosom
+     */
     static double calcFitness(ArrayList<Integer> chromosome) {
         int[][] currentBoard = new int[baris][kolom];
         
@@ -156,7 +223,14 @@ public class MosaicGA {
         return (double) ((1 / totalError) + 1);
     }
 
-
+    /**
+     * Menghitung jumlah kotak berwarna hitam di tetangga dan diri sendiri
+     *
+     * @param board board yang menyimpan 0, 1, atau null
+     * @param posisiX koordinat x sebuah kotak
+     * @param posisiY koordinat y sebuah kotak
+     * @return jumlah hitam pada tetangga kotak dan diri sendiri
+     */
     private static int hitungHitam(int[][] board, int posisiX, int posisiY){
         int count = 0;
         //loop tetangga termasuk dirinya sendiri (3x3)
@@ -175,6 +249,12 @@ public class MosaicGA {
         return count;
     }
 
+    /**
+     * Main method untuk menjalankan preprocessing dan  program genetic algorithm
+     *
+     * @param args
+     * @throws FileNotFoundException throw file input yang tidak ditemukan
+     */
     public static void main(String[] args) throws FileNotFoundException {
         File file = new File("Input/10x10Easy_3_283_336.txt");
         Scanner sc = new Scanner(file);
@@ -197,7 +277,7 @@ public class MosaicGA {
         double elitismRate = sc.nextDouble();// presentase individu terbaik akan disimpan ke generasi berikutnya
         double mutationRate = sc.nextDouble();//probabilitas gen pada kromosom mengalami mutasi
 
-        //Melakukan preprocessing terhadap
+        //Melakukan preprocessing
         runHeuristics();
 
         MosaicAlgoGA GA = new MosaicAlgoGA(rnd, populasiSize, maxGenerations, mutationRate, elitismRate, crossoverRate);
@@ -223,6 +303,11 @@ public class MosaicGA {
 
     }
 
+    /**
+     * Print jumlah hitam yang sebenarnya dan jumlah hitam yang dikerjakan oleh genetic algorithm
+     *
+     * @param finalBoard board yang telah dipecahkan oleh genetic algorithm
+     */
     private static void printYgMasihError(int [][]finalBoard){
         System.out.println("\n=== Yang Masih Error ===");
         int cnt = 1;
@@ -238,6 +323,13 @@ public class MosaicGA {
             }
         }
     }
+
+    /**
+     * Print board solusi.
+     * Menggabunglan daftar kotak tidak pasti (kromosom) dengan final board
+     *
+     * @param chromosome menyimpan daftar kotak yang tidak pasti
+     */
     private static void printBestSolution(ArrayList<Integer> chromosome) {
         int[][] finalBoard = new int[baris][kolom];
                 
@@ -267,7 +359,12 @@ public class MosaicGA {
         printYgMasihError(finalBoard);
     }
 
-    public static int getChromosomeSize() {//method untuk ambil ukuran kromosom (banyak kotak yang tidak pasti)
+    /**
+     * Mengambil ukuran kromosom (banyak kotak yang tidak pasti)
+     *
+     * @return jumlah kotak yang tidak pasti
+     */
+    public static int getChromosomeSize() {
         return daftarKotakTidakPasti.size();
     }
 }
