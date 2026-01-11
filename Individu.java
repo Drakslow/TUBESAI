@@ -2,12 +2,28 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class Individu implements Comparable<Individu> {
+    /**
+     * Menyimpan fitness sebuah individu
+     */
     public double fitness;
-    public Random rand; // random untuk peluang mutasi
 
-    // Kromosom: 0 = Putih, 1 = Hitam
+    /**
+     * Random untuk peluang mutasi
+     */
+    public Random rand;
+
+    /**
+     * Simpan gen di dalam kromosom
+     *
+     * Kromosom: 0 = Putih, 1 = Hitam
+     */
     public ArrayList<Integer> kromosom;
 
+    /**
+     * Construct individu baru dengan nilai peluang mutasi random
+     *
+     * @param rand peluang mutasi
+     */
     public Individu(Random rand) {
         this.rand = rand;
         this.kromosom = new ArrayList<>();
