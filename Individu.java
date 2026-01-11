@@ -38,7 +38,8 @@ public class Individu implements Comparable<Individu> {
     }
 
     /**
-     * Construct individu baru dengan nilai peluang mutasi random dan ukuran kromosom
+     * Construct individu baru dengan seed random dan ukuran kromosom
+     * setiap gen dirandomisasi untuk menentukan isi gen 0 atau 1
      *
      * @param rand objek random dengan seed
      * @param size ukuran kromosom atau banyak gen dari sebuah kromosom
