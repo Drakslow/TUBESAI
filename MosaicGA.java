@@ -340,9 +340,9 @@ public class MosaicGA {
 
         MosaicAlgoGA GA = new MosaicAlgoGA(rnd, populasiSize, maxGenerations, mutationRate, elitismRate, crossoverRate);
 
-        double mulai = System.currentTimeMillis();
+        long mulai = System.currentTimeMillis();
         Individu bestSolution = GA.run();
-        double akhir = System.currentTimeMillis();
+        long akhir = System.currentTimeMillis();
 
         System.out.println("\n=== Parameters ===");
         System.out.println("MaxGeneration : "+maxGenerations);

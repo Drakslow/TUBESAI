@@ -1,0 +1,20 @@
+Input 1 : Easy, Puzzle_ID :2_134
+Input 2 : Easy, Puzzle_Id :2_215_964
+Input 3 : Easy, Puzzle_Id :8,723,468
+Input 4 : Easy, Puzzle_Id :129,038
+Input 5 : Easy, Puzzle_Id :2,227,191
+Input 6 : Easy, Puzzle_Id :3,315,862
+Input 7 : Easy, Puzzle_Id :2,766,540
+Input 8 : Easy, Puzzle_ID :1,187,268
+Input 9 : Easy, Puzzle_Id : 4,260,665
+Input 10 : Easy, Puzzle_Id :3,252,052
+Input 11 : Hard, Puzzle_Id :3_952_718
+Input 12 : Hard, Puzzle_Id :5_269_844
+Input 13 : Hard, Puzzle_Id :5_356_970
+Input 14 : Hard, Puzzle_Id :1,024,785
+Input 15 : Hard, Puzzle_Id :7,978,649
+Input 16 : Hard, Puzzle_Id :2,558,710
+Input 17 : Hard, Puzzle_Id :497,704
+Input 18 : Hard, Puzzle_Id :3,525,058
+Input 19 : Hard, Puzzle_Id :6,335,870
+Input 20 : Hard, Puzzle_Id :8,332,064
