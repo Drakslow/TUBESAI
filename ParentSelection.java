@@ -12,8 +12,8 @@ public class ParentSelection {
     /**
      * Metode Roulette Wheel Selection memilih 2 parent dengan bergantung pada fitness
      *
-     * @param rand
-     * @param populasi
+     * @param rand objek random dengan seed
+     * @param populasi menyimpan Individu di ArrayList
      * @return parents, yaitu array of 2 Individu
      */
     public static Individu[] rouletteWheel(Random rand, ArrayList<Individu> populasi) {
@@ -58,8 +58,8 @@ public class ParentSelection {
     /**
      * Metode Rank Selection memilih 2 parent dengan mengurutkan peringkat dari fitness
      *
-     * @param rand
-     * @param populasi
+     * @param rand objek random dengan seed
+     * @param populasi menyimpan Individu di ArrayList
      * @return parents, yaitu array of 2 Individu
      */
     public static Individu[] rankSelection(Random rand, ArrayList<Individu> populasi) {
@@ -96,8 +96,8 @@ public class ParentSelection {
     /**
      * Metode Tournamen Selection memilih 2 parent dengan memilih 10% calon parent dari populasi dan mengambil fitness tertinggi
      *
-     * @param rand
-     * @param populasi
+     * @param rand objek random dengan seed
+     * @param populasi menyimpan Individu di ArrayList
      * @return parents, yaitu array of 2 Individu
      */
     public static Individu[] tournamentSelection(Random rand, ArrayList<Individu> populasi) {

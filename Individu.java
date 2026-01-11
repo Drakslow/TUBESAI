@@ -29,7 +29,7 @@ public class Individu implements Comparable<Individu> {
     /**
      * Construct individu baru dengan nilai peluang mutasi random
      *
-     * @param rand peluang mutasi
+     * @param rand objek random dengan seed
      */
     public Individu(Random rand) {
         this.rand = rand;
@@ -40,7 +40,7 @@ public class Individu implements Comparable<Individu> {
     /**
      * Construct individu baru dengan nilai peluang mutasi random dan ukuran kromosom
      *
-     * @param rand nilai random untuk peluang mutasi
+     * @param rand objek random dengan seed
      * @param size ukuran kromosom atau banyak gen dari sebuah kromosom
      */
     public Individu(Random rand, int size) {
