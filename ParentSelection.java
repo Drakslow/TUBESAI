@@ -12,7 +12,7 @@ public class ParentSelection {
 
         for (int i = 0; i < populasi.size(); i++) {
             double fit = populasi.get(i).getFitness(); //ambil fitness
-            double score = 1.0 / (fit + 0.1); // +0.1 menghindari div by zero jika solved
+            double score = 1.0 / fit; // +0.1 menghindari div by zero jika solved
             probs[i] = score;
             totalInverseFitness += score;
         }

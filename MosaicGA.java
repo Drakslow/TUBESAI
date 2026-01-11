@@ -153,7 +153,7 @@ public class MosaicGA {
                 totalError += Math.abs(currentBlacks - clue); //cek berapa banyak selisih antara hitam sekarang dan clue
             }
         }
-        return (double) totalError;
+        return (double) ((1 / totalError) + 1);
     }
 
 
@@ -176,7 +176,7 @@ public class MosaicGA {
     }
 
     public static void main(String[] args) throws FileNotFoundException {
-        File file = new File("input.txt");
+        File file = new File("Input/10x10Easy_3_283_336.txt");
         Scanner sc = new Scanner(file);
 
         baris = sc.nextInt();
