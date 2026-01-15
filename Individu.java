@@ -71,21 +71,21 @@ public class Individu implements Comparable<Individu> {
         ArrayList<int[][]> result = new ArrayList<>();
 
         // kiri atas
-        result.add(extract(0, mid, 0, mid));
+        result.add(copyPiece(0, mid, 0, mid));
 
         // kanan atas
-        result.add(extract(0, mid, mid, kromosomSize));
+        result.add(copyPiece(0, mid, mid, kromosomSize));
 
         // kiri bawah
-        result.add(extract(mid, kromosomSize, 0, mid));
+        result.add(copyPiece(mid, kromosomSize, 0, mid));
 
         // kanan bawah
-        result.add(extract(mid, kromosomSize, mid, kromosomSize));
+        result.add(copyPiece(mid, kromosomSize, mid, kromosomSize));
 
         return result;
     }
 
-    private int[][] extract(int rowStart, int rowEnd, int colStart, int colEnd) {
+    private int[][] copyPiece(int rowStart, int rowEnd, int colStart, int colEnd) {
 
         int[][] piece = new int[rowEnd - rowStart][colEnd - colStart];
 
