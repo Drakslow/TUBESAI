@@ -137,6 +137,26 @@ public class Individu implements Comparable<Individu> {
         return new Individu[]{anak1, anak2};
     }
 
+    private Individu[] crossoverHorizontal(Individu other) {
+        Individu anak1 = new Individu(this.rand);
+        Individu anak2 = new Individu(this.rand);
+
+        int lokasiCut = rand.nextInt(MosaicGA.baris);
+
+        for (int y = 0; y < MosaicGA.baris; y++) {
+            for (int x = 0; x < MosaicGA.kolom; x++) {
+                if (MosaicGA.fixedBoard[y][x] != -1) continue;
+                if (y < lokasiCut) {
+                    anak1.kromosom[y][x] = this.kromosom[y][x];
+                    anak2.kromosom[y][x] = other.kromosom[y][x];
+                } else {
+                    anak1.kromosom[y][x] = other.kromosom[y][x];
+                    anak2.kromosom[y][x] = this.kromosom[y][x];
+                }
+            }
+        }
+        return new Individu[]{anak1, anak2};
+    }
     /**
      * Melakukan Crossover Diagonal dengan Variasi.
      * * @param other Pasangan (Induk B)
