@@ -85,7 +85,7 @@ public class MosaicAlgoGA {
                 globalBest = currentBest;
             }
 
-            System.out.printf("Generasi: %d | Best Fitness: %.5f\n", generation, globalBest.getFitness());
+            System.out.printf("Generasi: %4d | Best Fitness: %.5f\n", generation, globalBest.getFitness());
 
             if (globalBest.getFitness() == 1.0) {
                 System.out.println("Solution found: " + generation);
@@ -95,8 +95,14 @@ public class MosaicAlgoGA {
             // Buat populasi baru dengan elitism
             currentPop = currentPop.getNewPopulasiWElit();
             currentPop.calcAllFitnesses();
+
+            //Eksperimen
+            MosaicGA.generasiBestF[MosaicGA.counterInput][generation]=currentPop.getBestIdv().getFitness();
+
             generation++;
         }
+        //EKsperimen
+        MosaicGA.generasiPerInput[MosaicGA.counterInput]=generation;
 
         return globalBest;
     }
