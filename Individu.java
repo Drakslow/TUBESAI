@@ -104,57 +104,71 @@ public class Individu implements Comparable<Individu> {
      * @param other objek Individu yang menyimpan informasi individu lain
      * @return 2 anak hasil crossover yang disimpan dalam array of Individu
      */
-    public Individu[] crossover(Individu other) {
-        //buat 2 children baru
+    public Individu[] piecesCrossover(Individu other) {
+
         Individu anak1 = new Individu(this.rand);
         Individu anak2 = new Individu(this.rand);
 
-        int size = this.kromosom.size();
-        int crossoverType = 3; //ubah tipe crossover di sini
+        // potong kromosom jadi 4 pieces
+        ArrayList<int[][]> piecesA = this.cutBoardInto4Pieces();
+        ArrayList<int[][]> piecesB = other.cutBoardInto4Pieces();
 
-        // Untuk single dan two point
-        //0 sampai first
-        //(first+1) sampai second
-        int firstCutPoint = rand.nextInt(size-1); // dari 0
-        int secondCutPoint = firstCutPoint + rand.nextInt(size - firstCutPoint); // sampai size-1
+        int size = piecesA.size(); // harus 4
+        int cutPoint = rand.nextInt(size - 1) + 1; // bebas: 1..3
 
-        //pencegahan salah logic
-        if (firstCutPoint == secondCutPoint) {
-            secondCutPoint++;
-        }
+        ArrayList<int[][]> childPieces1 = new ArrayList<>();
+        ArrayList<int[][]> childPieces2 = new ArrayList<>();
 
-        if (crossoverType == 1) {
-            //dalam first point, secondCutPoint menjadi pembaginya
-            firstCutPoint = 0;
-        }
-
-        if (crossoverType < 3) { //yang bukan uniform
-            for (int i = 0; i < size; i++) {
-                //dibuat i < second cut karena dalam kasus one dan two point cut, jika second cut berada di size-1, size-1 bisa di crossover
-                //sehingga children tidak copy dari orang tua
-                if (i >= firstCutPoint && i < secondCutPoint) { //i < second karena menyisakan ujung untuk crossover
-                    anak1.kromosom.add(this.kromosom.get(i));
-                    anak2.kromosom.add(other.kromosom.get(i));
-                } else { //untuk yang di bawah first cut dan di atas atau sama dengan second cut
-                    anak1.kromosom.add(other.kromosom.get(i));
-                    anak2.kromosom.add(this.kromosom.get(i));
-                }
+        for (int i = 0; i < size; i++) {
+            if (i < cutPoint) {
+                childPieces1.add(copyPieces(piecesA.get(i)));
+                childPieces2.add(copyPieces(piecesB.get(i)));
+            } else {
+                childPieces1.add(copyPieces(piecesB.get(i)));
+                childPieces2.add(copyPieces(piecesA.get(i)));
             }
         }
-        else { //untuk uniform
-            for (int i = 0; i < size; i++) {
-                //setiap gen orang tua punya peluang 0.5 untuk ditempati di gen anak 1 atau 2
-                if (rand.nextDouble() < 0.5) {
-                    anak1.kromosom.add(this.kromosom.get(i));
-                    anak2.kromosom.add(other.kromosom.get(i));
-                } else {
-                    anak1.kromosom.add(other.kromosom.get(i));
-                    anak2.kromosom.add(this.kromosom.get(i));
-                }
-            }
-        }
+
+        // gabungkan kembali jadi kromosom utuh
+        anak1.kromosom = mergePieces(childPieces1);
+        anak2.kromosom = mergePieces(childPieces2);
 
         return new Individu[]{anak1, anak2};
+    }
+
+    private int[][] copyPieces(int[][] piece) {
+        int[][] copy = new int[piece.length][piece[0].length];
+        for (int i = 0; i < piece.length; i++) {
+            for (int j = 0; j < piece[0].length; j++) {
+                copy[i][j] = piece[i][j];
+            }
+        }
+        return copy;
+    }
+
+    private int[][] mergePieces(ArrayList<int[][]> pieces) {
+        int[][] topLeft = pieces.get(0);
+        int[][] topRight = pieces.get(1);
+        int[][] bottomLeft = pieces.get(2);
+        int[][] bottomRight = pieces.get(3);
+
+        int pieceLength = topLeft.length;
+        int[][] newKromosom = new int[kromosom.length][kromosom.length];
+
+        paste(newKromosom, topLeft, 0, 0);
+        paste(newKromosom, topRight, 0, pieceLength);
+        paste(newKromosom, bottomLeft, pieceLength, 0);
+        paste(newKromosom, bottomRight, pieceLength, pieceLength);
+
+        return newKromosom;
+    }
+
+    private void paste(int[][] newKromosom, int[][] piece, int rowStart, int colStart) {
+        for (int i = 0; i < piece.length; i++) {
+            for (int j = 0; j < piece[0].length; j++) {
+                piece[rowStart + i][colStart + j] = piece[i][j];
+            }
+        }
     }
 
     /**
