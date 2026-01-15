@@ -47,7 +47,7 @@ public class MosaicGA {
 
 
     //PenyimpanRataRata
-    static double generasiBestF[][] = new double[20][10001];
+    static double generasiBestF[][] = new double[20][1001];
     static double minimumFitness = Double.MAX_VALUE;
     static double waktuPerInput[] = new double[20];
     static double generasiPerInput[] = new double[20];
@@ -320,10 +320,10 @@ public class MosaicGA {
      */
     public static void main(String[] args) throws FileNotFoundException {
         for (int input = 1; input < 21 ; input++) {
-            PrintStream out = new PrintStream(new File(String.format("./Input/10x10/OutputTest%d.txt",input)));
+            PrintStream out = new PrintStream(new File(String.format("./Input/15x15/OutputTest%d.txt",input)));
             System.setOut(out);
             seed = 42;
-            File file = new File(String.format("./Input/10x10/input%d.txt",input));
+            File file = new File(String.format("./Input/15x15/input%d.txt",input));
             Scanner sc = new Scanner(file);
 
             baris = sc.nextInt();
@@ -344,7 +344,7 @@ public class MosaicGA {
 //            double elitismRate = sc.nextDouble();// presentase individu terbaik akan disimpan ke generasi berikutnya
 //            double mutationRate = sc.nextDouble();//probabilitas gen pada kromosom mengalami mutasi
 
-            int maxGenerations = 10000;// maksimal generasi yang akan dimiliki oleh GA
+            int maxGenerations = 5000;// maksimal generasi yang akan dimiliki oleh GA
             int populasiSize = 500; // banyak individu dalam 1 populasi
             double crossoverRate = 0.8;// probabilitas kemungkinan parents melakukan crossover
             double elitismRate = 0.1;// presentase individu terbaik akan disimpan ke generasi berikutnya
@@ -396,7 +396,7 @@ public class MosaicGA {
 
     private static void printRataRataEksperimen() throws FileNotFoundException {
         PrintStream out = new PrintStream(
-                new File("./Input/10x10/EksperimenRata_Rata.txt")
+                new File("./Input/15x15/EksperimenRata_Rata.txt")
         );
         System.setOut(out);
 
