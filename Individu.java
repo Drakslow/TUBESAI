@@ -32,12 +32,12 @@ public class Individu implements Comparable<Individu> {
      */
     public Individu(Random rand) {
         this.rand = rand;
-        this.kromosom = new int[baris][kolom];
+        this.kromosom = new int[MosaicGA.baris][MosaicGA.kolom];
         this.fitness = 0.0; // inisialisasi fitness dari 0, karena yang diincar adalah 1.0 (semakin besar
                             // semakin baik, dengan range 0.0 - 1.0)
 
-        for (int y = 0; y < baris; y++) {
-            for (int x = 0; x < kolom; x++) {
+        for (int y = 0; y < MosaicGA.baris; y++) {
+            for (int x = 0; x < MosaicGA.kolom; x++) {
 
                 if (MosaicGA.fixedBoard[y][x] == -1) {
                     kromosom[y][x] = rand.nextBoolean() ? 1 : 0;
@@ -72,63 +72,69 @@ public class Individu implements Comparable<Individu> {
     }
 
     /**
-     * Melakukan crossover dengan 3 tipe, yaitu single-point, two-point, dan uniform
-     * crossover
+     * Method utama crossover yang memanggil berbagai jenis crossover.
+     * Pilih tipe crossover dengan mengubah nilai crossoverType.
      *
-     * @param other objek Individu yang menyimpan informasi individu lain
+     * @param other objek Individu yang menjadi pasangan crossover
      * @return 2 anak hasil crossover yang disimpan dalam array of Individu
      */
     public Individu[] crossover(Individu other) {
-        // buat 2 children baru
+        int crossoverType = 1; // Ubah tipe crossover di sini (1-8)
+
+        if (crossoverType == 1){
+            return crossoverDiagonalVariations(other, 1); // One-Point Diagonal
+        }else if (crossoverType == 2){
+            return crossoverDiagonalVariations(other, 2); // Two-Point Diagonal
+        }else{
+            return crossoverDiagonalVariations(other, 3); // Uniform Diagonal
+        }
+//        switch (crossoverType) {
+//            case 1:
+//                return crossoverHorizontal(other);
+//            case 2:
+//                return crossoverVertical(other);
+//            case 3:
+//                return crossoverBlock(other);
+//            case 4:
+//                return crossoverUniform(other);
+//            case 5:
+//                return crossoverQuadrant(other);
+//            case 6:
+//                return crossoverDiagonalVariations(other, 1); // One-Point Diagonal
+//            case 7:
+//                return crossoverDiagonalVariations(other, 2); // Two-Point Diagonal
+//            case 8:
+//                return crossoverDiagonalVariations(other, 3); // Uniform Diagonal
+//            default:
+//                return crossoverUniform(other); // Default ke uniform
+//        }
+    }
+
+    /**
+     * Crossover Vertical - Memotong secara vertikal
+     *
+     * @param other pasangan crossover
+     * @return 2 anak hasil crossover
+     */
+    private Individu[] crossoverVertical(Individu other) {
         Individu anak1 = new Individu(this.rand);
         Individu anak2 = new Individu(this.rand);
 
-        int size = this.kromosom.size();
-        int crossoverType = 3; // ubah tipe crossover di sini
+        int lokasiCut = rand.nextInt(MosaicGA.kolom);
 
-        // Untuk single dan two point
-        // 0 sampai first
-        // (first+1) sampai second
-        int firstCutPoint = rand.nextInt(size - 1); // dari 0
-        int secondCutPoint = firstCutPoint + rand.nextInt(size - firstCutPoint); // sampai size-1
-
-        // pencegahan salah logic
-        if (firstCutPoint == secondCutPoint) {
-            secondCutPoint++;
-        }
-
-        if (crossoverType == 1) {
-            // dalam first point, secondCutPoint menjadi pembaginya
-            firstCutPoint = 0;
-        }
-
-        if (crossoverType < 3) { // yang bukan uniform
-            for (int i = 0; i < size; i++) {
-                // dibuat i < second cut karena dalam kasus one dan two point cut, jika second
-                // cut berada di size-1, size-1 bisa di crossover
-                // sehingga children tidak copy dari orang tua
-                if (i >= firstCutPoint && i < secondCutPoint) { // i < second karena menyisakan ujung untuk crossover
-                    anak1.kromosom.add(this.kromosom.get(i));
-                    anak2.kromosom.add(other.kromosom.get(i));
-                } else { // untuk yang di bawah first cut dan di atas atau sama dengan second cut
-                    anak1.kromosom.add(other.kromosom.get(i));
-                    anak2.kromosom.add(this.kromosom.get(i));
-                }
-            }
-        } else { // untuk uniform
-            for (int i = 0; i < size; i++) {
-                // setiap gen orang tua punya peluang 0.5 untuk ditempati di gen anak 1 atau 2
-                if (rand.nextDouble() < 0.5) {
-                    anak1.kromosom.add(this.kromosom.get(i));
-                    anak2.kromosom.add(other.kromosom.get(i));
+        for (int y = 0; y < MosaicGA.baris; y++) {
+            for (int x = 0; x < MosaicGA.kolom; x++) {
+                if (MosaicGA.fixedBoard[y][x] != -1) continue;
+                if (x < lokasiCut) {
+                    anak1.kromosom[y][x] = this.kromosom[y][x];
+                    anak2.kromosom[y][x] = other.kromosom[y][x];
                 } else {
-                    anak1.kromosom.add(other.kromosom.get(i));
-                    anak2.kromosom.add(this.kromosom.get(i));
+                    anak1.kromosom[y][x] = other.kromosom[y][x];
+                    anak2.kromosom[y][x] = this.kromosom[y][x];
                 }
             }
         }
-
-        return new Individu[] { anak1, anak2 };
+        return new Individu[]{anak1, anak2};
     }
 
     /**
@@ -152,7 +158,6 @@ public class Individu implements Comparable<Individu> {
         int maxDiag = (rows - 1);
         int totalDiagonals = maxDiag - minDiag + 1;
 
-        // --- PERSIAPAN LOGIKA POTONG ---
         int cut1 = 0;
         int cut2 = 0;
         boolean[] uniformMap = null;
@@ -230,12 +235,13 @@ public class Individu implements Comparable<Individu> {
     /**
      * Melakukan mutasi untuk pada individu
      *
-     * @param mutationRate peluang mutasi untuk setiap gen
+     * @param mutationRate peluang mutasi untuk setiap gen kecuali yang sudah tetap
      */
     public void mutation(double mutationRate) {
         // lakukan mutasi di setiap gen
         for (int y = 0; y < MosaicGA.baris; y++) {
             for (int x = 0; x < MosaicGA.kolom; x++) {
+                //Skrip mutasi kalau cell nya sudah ad di fixedboard
                 if (MosaicGA.fixedBoard[y][x] != -1)
                     continue;
                 if (rand.nextDouble() < mutationRate) {

@@ -279,8 +279,7 @@ public class MosaicGA {
      * @throws FileNotFoundException throw file input yang tidak ditemukan
      */
     public static void main(String[] args) throws FileNotFoundException {
-        // File file = new File("Input/10x10Easy_3_283_336.txt");
-        File file = new File("Input/10x10Easy_3_283_336.txt");
+        File file = new File("Input/20x20/Input2.txt");
 
         Scanner sc = new Scanner(file);
 
@@ -299,11 +298,11 @@ public class MosaicGA {
         }
 
         //parameter (baca dari file juga)
-        int maxGenerations = sc.nextInt();// maksimal generasi yang akan dimiliki oleh GA 
-        int populasiSize = sc.nextInt(); // banyak individu dalam 1 populasi 
-        double crossoverRate = sc.nextDouble();// probabilitas kemungkinan parents melakukan crossover
-        double elitismRate = sc.nextDouble();// presentase individu terbaik akan disimpan ke generasi berikutnya
-        double mutationRate = sc.nextDouble();//probabilitas gen pada kromosom mengalami mutasi
+        int maxGenerations = 1000;// maksimal generasi yang akan dimiliki oleh GA
+        int populasiSize = 500; // banyak individu dalam 1 populasi
+        double crossoverRate = 0.8;// probabilitas kemungkinan parents melakukan crossover
+        double elitismRate = 0.1;// presentase individu terbaik akan disimpan ke generasi berikutnya
+        double mutationRate = 0.035;//probabilitas gen pada kromosom mengalami mutasi
 
         //Melakukan preprocessing
         runHeuristics();
