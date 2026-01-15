@@ -163,8 +163,12 @@ public class Individu implements Comparable<Individu> {
             cut1 = rand.nextInt(totalDiagonals) + minDiag;
         } else if (type == 2) {
             // TWO POINT: Pilih dua garis potong untuk membuat "Pita"
-            int r1 = rand.nextInt(totalDiagonals) + minDiag;
-            int r2 = rand.nextInt(totalDiagonals) + minDiag;
+            int r1 = 0;
+            int r2 = 0;
+            while (r1 == r2) {
+                r1 = rand.nextInt(totalDiagonals) + minDiag;
+                r2 = rand.nextInt(totalDiagonals) + minDiag;
+            }
             cut1 = Math.min(r1, r2);
             cut2 = Math.max(r1, r2);
         } else if (type == 3) {
