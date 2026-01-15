@@ -23,7 +23,7 @@ public class MosaicGA {
     /**
      * ukuran baris dan kolom pada board
      */
-    private static int baris, kolom;
+    protected static int baris, kolom;
 
     /**
      * Menyimpan input berupa clue
