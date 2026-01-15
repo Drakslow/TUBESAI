@@ -136,7 +136,7 @@ public class Individu implements Comparable<Individu> {
      * * @param other Pasangan (Induk B)
      * 
      * @param type 1 = One-Point (Belah Miring),
-     *             2 = Two-Point (Pita Miring),
+     *             2 = Two-Point (Belah 2 Miring),
      *             3 = Uniform (Acak per Garis Miring)
      * @return Array 2 anak hasil crossover
      */
@@ -147,12 +147,22 @@ public class Individu implements Comparable<Individu> {
         int rows = MosaicGA.baris;
         int cols = MosaicGA.kolom;
 
-        // Rentang nilai diagonal (y - x) adalah dari -(cols-1) sampai +(rows-1)
+        /*
+         * tentukan rentang diagonal, Contoh ukuran papan 3 x 3:
+         * | 0 -1 -2 |
+         * | 1 0 -1 |
+         * | 2 1 0 |
+         * Jadi,
+         * minDiag = -2
+         * maxDiag = 2
+         * total diagonal = 5, dengan rentang nilai{-2, -1, 0, 1, 2}
+         */
         int minDiag = -(cols - 1);
         int maxDiag = (rows - 1);
         int totalDiagonals = maxDiag - minDiag + 1;
 
-        // --- PERSIAPAN LOGIKA POTONG ---
+        // menentukan index untuk one point, two point, dan array boolean untuk
+        // menyimpan posisi anak 1 dan 2
         int cut1 = 0;
         int cut2 = 0;
         boolean[] uniformMap = null;
@@ -162,7 +172,7 @@ public class Individu implements Comparable<Individu> {
             // range random diantara minDiag dan maxDiag
             cut1 = rand.nextInt(totalDiagonals) + minDiag;
         } else if (type == 2) {
-            // TWO POINT: Pilih dua garis potong untuk membuat "Pita"
+            // TWO POINT: Pilih dua garis potong
             int r1 = 0;
             int r2 = 0;
             while (r1 == r2) {
@@ -179,7 +189,7 @@ public class Individu implements Comparable<Individu> {
             }
         }
 
-        // --- PROSES LOOPING MATRIKS ---
+        // Proses looping crossover
         for (int y = 0; y < rows; y++) {
             for (int x = 0; x < cols; x++) {
 
@@ -211,7 +221,7 @@ public class Individu implements Comparable<Individu> {
                         break;
                 }
 
-                // --- EKSEKUSI PENUKARAN GEN ---
+                // proses crossover
                 if (swap) {
                     // Jika kondisi terpenuhi: Anak 1 ambil B, Anak 2 ambil A
                     anak1.kromosom[y][x] = other.kromosom[y][x];
