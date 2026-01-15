@@ -63,6 +63,41 @@ public class Individu implements Comparable<Individu> {
         this.kromosom = new ArrayList<>(other.kromosom);
     }
 
+    public ArrayList<int[][]> cutBoardInto4Pieces() {
+
+        int kromosomSize = kromosom.length;
+        int mid = (kromosomSize + 1) / 2; // untuk ganjil dan genap
+
+        ArrayList<int[][]> result = new ArrayList<>();
+
+        // kiri atas
+        result.add(extract(0, mid, 0, mid));
+
+        // kanan atas
+        result.add(extract(0, mid, mid, kromosomSize));
+
+        // kiri bawah
+        result.add(extract(mid, kromosomSize, 0, mid));
+
+        // kanan bawah
+        result.add(extract(mid, kromosomSize, mid, kromosomSize));
+
+        return result;
+    }
+
+    private int[][] extract(int rowStart, int rowEnd, int colStart, int colEnd) {
+
+        int[][] piece = new int[rowEnd - rowStart][colEnd - colStart];
+
+        for (int i = rowStart; i < rowEnd; i++) {
+            for (int j = colStart; j < colEnd; j++) {
+                piece[i - rowStart][j - colStart] = this.kromosom[i][j];
+            }
+        }
+
+        return piece;
+    }
+
     /**
      * Melakukan crossover dengan 3 tipe, yaitu single-point, two-point, dan uniform crossover
      *
