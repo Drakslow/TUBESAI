@@ -64,34 +64,41 @@ public class Individu implements Comparable<Individu> {
     }
 
     public ArrayList<int[][]> cutBoardInto4Pieces() {
-
         int kromosomSize = kromosom.length;
         int mid = (kromosomSize + 1) / 2; // untuk ganjil dan genap
 
         ArrayList<int[][]> result = new ArrayList<>();
 
         // kiri atas
-        result.add(copyPiece(0, mid, 0, mid));
+        result.add(copyPiece(0, 0, mid));
 
         // kanan atas
-        result.add(copyPiece(0, mid, mid, kromosomSize));
+        result.add(copyPiece(0, kromosomSize - mid, mid));
 
         // kiri bawah
-        result.add(copyPiece(mid, kromosomSize, 0, mid));
+        result.add(copyPiece(kromosomSize - mid, 0, mid));
 
         // kanan bawah
-        result.add(copyPiece(mid, kromosomSize, mid, kromosomSize));
+        result.add(copyPiece(kromosomSize - mid, kromosomSize - mid, mid));
 
         return result;
     }
 
-    private int[][] copyPiece(int rowStart, int rowEnd, int colStart, int colEnd) {
+    private int[][] copyPiece(int rowStart, int colStart, int size) {
+        int[][] piece = new int[size][size];
 
-        int[][] piece = new int[rowEnd - rowStart][colEnd - colStart];
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                int r = rowStart + i;
+                int c = colStart + j;
 
-        for (int i = rowStart; i < rowEnd; i++) {
-            for (int j = colStart; j < colEnd; j++) {
-                piece[i - rowStart][j - colStart] = this.kromosom[i][j];
+                if (r >= 0 && r < kromosom.length &&
+                        c >= 0 && c < kromosom.length) {
+                    piece[i][j] = kromosom[r][c];
+                }
+                else {
+                    piece[i][j] = 0; // padding
+                }
             }
         }
 
@@ -166,7 +173,7 @@ public class Individu implements Comparable<Individu> {
     private void paste(int[][] newKromosom, int[][] piece, int rowStart, int colStart) {
         for (int i = 0; i < piece.length; i++) {
             for (int j = 0; j < piece[0].length; j++) {
-                piece[rowStart + i][colStart + j] = piece[i][j];
+                newKromosom[rowStart + i][colStart + j] = piece[i][j];
             }
         }
     }
