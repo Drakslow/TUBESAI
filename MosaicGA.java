@@ -33,7 +33,7 @@ public class MosaicGA {
     /**
      * board untuk simpan jawaban yg sudah pasti (0 = putih, 1=hitam, null = tidak diketahui)
      */
-    private static Integer[][] fixedBoard;
+    protected static int[][] fixedBoard;
 
     /**
      * list yang menyimpan koordinat kotak belum pasti
@@ -90,7 +90,7 @@ public class MosaicGA {
         daftarKotakTidakPasti = new ArrayList<>();
         for (int y = 0; y < baris; y++) {
             for (int x = 0; x < kolom; x++) {
-                if (fixedBoard[y][x] == null) {
+                if (fixedBoard[y][x] == -1) {
                     if (disekitarClue(x, y)) {
                         //jika penting, masukin ke kromosom
                         daftarKotakTidakPasti.add(new Koordinat(x, y));
@@ -179,7 +179,7 @@ public class MosaicGA {
                 int nilaiX = posisiX + cekX;
                 int nilaiY = posisiY + cekY;
                 if (nilaiX >= 0 && nilaiX < kolom && nilaiY >= 0 && nilaiY < baris) {//cek apabila masih masuk ke dalam peta
-                    if (fixedBoard[nilaiY][nilaiX] == null) {//jika kotak belum di set (masih null), maka set warna nya
+                    if (fixedBoard[nilaiY][nilaiX] == -1) {//jika kotak belum di set (masih null), maka set warna nya
                         fixedBoard[nilaiY][nilaiX] = warna;
                         perubahan = true;
                     } 
@@ -224,37 +224,7 @@ public class MosaicGA {
      * @param chromosome menyimpan daftar kotak tidak pasti berupa koordinat
      * @return fitness dari sebuah kromosom
      */
-    static double calcFitness(ArrayList<Integer> chromosome) {
-        int[][] currentBoard = new int[baris][kolom];
-        
-        //ambil kotak yang sudah pasti
-        for(int y=0; y<baris; y++){
-            for(int x=0; x<kolom; x++){
-                if(fixedBoard[y][x] != null) {
-                    currentBoard[y][x] = fixedBoard[y][x];
-                }
-            }
-        }
-
-        //ambil kotak yg blm pasti
-        if (chromosome != null && !chromosome.isEmpty()) {
-            for (int i = 0; i < chromosome.size(); i++) {
-                Koordinat koorSekarang = daftarKotakTidakPasti.get(i);
-                currentBoard[koorSekarang.getY()][koorSekarang.getX()] = chromosome.get(i);
-            }
-        }
-
-        // //hitung banyak eror nya (kotak hitam tidak sesuai clue)
-        // int totalError = 0;
-        // for (int y = 0; y < baris; y++) {
-        //     for (int x = 0; x < kolom; x++) {
-        //         int clue = map[y][x]; //ambil value dr kotak nya
-        //         if (clue==-1) continue;//kalo isinya -1 lanjut aja (di skip)
-        //         int currentBlacks = hitungHitam(currentBoard, x, y); //ambil banyak hitam dari kotak clue sekarang
-        //         totalError += Math.abs(currentBlacks - clue); //cek berapa banyak selisih antara hitam sekarang dan clue
-        //     }
-        // }
-        // return (double) ((1 / totalError) + 1);
+    static double calcFitness(int[][] chromosome) {
 
         //inisialisasi total error yg ada saat ini dengan 0
         int totalError = 0;
@@ -265,12 +235,12 @@ public class MosaicGA {
                 int clue = map[y][x]; //ambil value dr kotak nya
                 if (clue == -1) continue; //kalo isinya -1 lanjut aja (di skip)
                 
-                int currentBlacks = hitungHitam(currentBoard, x, y); //ambil banyak hitam dari kotak clue sekarang
+                int currentBlacks = hitungHitam(chromosome, x, y); //ambil banyak hitam dari kotak clue sekarang
                 totalError += Math.abs(currentBlacks - clue); //cek berapa banyak selisih antara hitam sekarang dan clue
             }
         }
         //hitung fitness berdasarkan total error (semakin besar fitnessnya semakin baik)
-        double fitness = (probMaxError - (double)totalError) / probMaxError;
+        double fitness = (probMaxError - (double)totalError + 1) / (probMaxError+1);
 
         // Jaga jaga agar tidak return hasil negatif
         return Math.max(0.0, fitness);
@@ -317,7 +287,10 @@ public class MosaicGA {
         baris = sc.nextInt();
         kolom = sc.nextInt();
         map = new int[baris][kolom];
-        fixedBoard = new Integer[baris][kolom];
+        fixedBoard = new int[baris][kolom];
+        for (int y = 0; y < baris; y++) {
+            Arrays.fill(fixedBoard[y], -1);
+        }
 
         for (int i = 0; i < baris; i++) {
             for (int j = 0; j < kolom; j++) {
@@ -386,34 +359,16 @@ public class MosaicGA {
      * Print board solusi.
      * Menggabunglan daftar kotak tidak pasti (kromosom) dengan final board
      *
-     * @param chromosome menyimpan daftar kotak yang tidak pasti
+     * @param finalBoard menyimpan daftar kotak yang tidak pasti
      */
-    private static void printBestSolution(ArrayList<Integer> chromosome) {
-        int[][] finalBoard = new int[baris][kolom];
-                
-        //ambil kotak yg sudah pasti
-        for(int y=0; y<baris; y++){
-            for(int x=0; x<kolom; x++){
-                if(fixedBoard[y][x] != null) {
-                    finalBoard[y][x] = fixedBoard[y][x];
-                }
-            }
-        }
-        
-        //ambil kotak yg blm pasti
-        if (chromosome != null && !chromosome.isEmpty()) {
-            for (int i = 0; i < chromosome.size(); i++) {
-                Koordinat koorSekarang = daftarKotakTidakPasti.get(i);
-                finalBoard[koorSekarang.getY()][koorSekarang.getX()] = chromosome.get(i);
-            }
-        }
-
+    private static void printBestSolution(int[][] finalBoard) {
         for (int y = 0; y < baris; y++) {
             for (int x = 0; x < kolom; x++) {
-                System.out.print((finalBoard[y][x] == 1 ? "# " : ". "));
+                System.out.print(finalBoard[y][x] == 1 ? "# " : ". ");
             }
             System.out.println();
         }
+
         printYgMasihError(finalBoard);
     }
 

@@ -1,4 +1,3 @@
-import java.util.ArrayList;
 import java.util.Random;
 
 /**
@@ -24,7 +23,7 @@ public class Individu implements Comparable<Individu> {
      * Simpan gen di dalam kromosom.
      * Kromosom: 0 = Putih, 1 = Hitam
      */
-    public ArrayList<Integer> kromosom;
+    public int[][] kromosom;
 
     /**
      * Construct individu baru dengan nilai peluang mutasi random
@@ -33,24 +32,28 @@ public class Individu implements Comparable<Individu> {
      */
     public Individu(Random rand) {
         this.rand = rand;
-        this.kromosom = new ArrayList<>();
+        this.kromosom = new int[baris][kolom];
         this.fitness = 0.0; //inisialisasi fitness dari 0, karena yang diincar adalah 1.0 (semakin besar semakin baik, dengan range 0.0 - 1.0)
-    }
 
+        for (int y = 0; y < baris; y++) {
+            for (int x = 0; x < kolom; x++) {
+
+                if (MosaicGA.fixedBoard[y][x] == -1) {
+                    kromosom[y][x] = rand.nextBoolean() ? 1 : 0;
+                } else {
+                    kromosom[y][x] = MosaicGA.fixedBoard[y][x];
+                }
+
+            }
+        }
+    }
     /**
      * Construct individu baru dengan seed random dan ukuran kromosom
      * setiap gen dirandomisasi untuk menentukan isi gen 0 atau 1
      *
      * @param rand objek random dengan seed
-     * @param size ukuran kromosom atau banyak gen dari sebuah kromosom
      */
-    public Individu(Random rand, int size) {
-        this(rand);
 
-        for (int i = 0; i < size; i++) {
-            this.kromosom.add(rand.nextBoolean() ? 1 : 0);
-        }
-    }
 
     /**
      * Construct individu baru dengan menyalin individu lain
@@ -60,7 +63,11 @@ public class Individu implements Comparable<Individu> {
     public Individu(Individu other) {
         this.rand = other.rand;
         this.fitness = other.fitness;
-        this.kromosom = new ArrayList<>(other.kromosom);
+        this.kromosom = new int[MosaicGA.baris][MosaicGA.kolom];
+
+        for (int i = 0; i < MosaicGA.baris; i++) {
+            System.arraycopy(other.kromosom[i], 0, this.kromosom[i], 0, MosaicGA.kolom);
+        }
     }
 
     /**
@@ -80,7 +87,7 @@ public class Individu implements Comparable<Individu> {
         // Untuk single dan two point
         //0 sampai first
         //(first+1) sampai second
-        int firstCutPoint = rand.nextInt(size-1); // dari 0
+        int firstCutPoint = rand.nextInt(size - 1); // dari 0
         int secondCutPoint = firstCutPoint + rand.nextInt(size - firstCutPoint); // sampai size-1
 
         //pencegahan salah logic
@@ -105,8 +112,7 @@ public class Individu implements Comparable<Individu> {
                     anak2.kromosom.add(this.kromosom.get(i));
                 }
             }
-        }
-        else { //untuk uniform
+        } else { //untuk uniform
             for (int i = 0; i < size; i++) {
                 //setiap gen orang tua punya peluang 0.5 untuk ditempati di gen anak 1 atau 2
                 if (rand.nextDouble() < 0.5) {
@@ -129,11 +135,13 @@ public class Individu implements Comparable<Individu> {
      */
     public void mutation(double mutationRate) {
         //lakukan mutasi di setiap gen
-        for (int i = 0; i < this.kromosom.size(); i++) {
-            if (rand.nextDouble() < mutationRate) {
-                int currentVal = this.kromosom.get(i);
-                //mutasi lgsg flip bitnya
-                this.kromosom.set(i, currentVal == 1 ? 0 : 1);
+        for (int y = 0; y < MosaicGA.baris; y++) {
+            for (int x = 0; x < MosaicGA.kolom; x++) {
+                if (MosaicGA.fixedBoard[y][x] != -1) continue;
+                if (rand.nextDouble() < mutationRate) {
+                    //mutasi lgsg flip bitnya
+                    kromosom[y][x] = kromosom[y][x] == 1 ? 0 : 1;
+                }
             }
         }
     }

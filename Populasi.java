@@ -62,12 +62,9 @@ public class Populasi {
      * Membuat populasi di mana setiap individu memiliki gen yang ditentukan secara random
      */
     public void randomPopulasi() {
-        //jumlah gen
-        int genomeSize = MosaicGA.getChromosomeSize();
-
         for (int i = 0; i < maxPopulasi; i++) {
             // buat individu baru dengan jumlah gen dan masukkan ke dalam populasi
-            Individu idv = new Individu(this.rand, genomeSize);
+            Individu idv = new Individu(this.rand);
             this.populasi.add(idv);
         }
     }
