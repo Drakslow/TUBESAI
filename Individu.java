@@ -80,52 +80,52 @@ public class Individu implements Comparable<Individu> {
      *
      * @return 2 anak hasil crossover yang disimpan dalam array of Individu
      */
-    public Individu[] crossoverUniformVariations(Individu other, int type){
-        //inisialisasi anak1 dan anak2 terlebih dahulu
-        Individu anak1 = new Individu(this.rand);
-        Individu anak2 = new Individu(this.rand);
-
-        if(type == 1){ // jika tipe nya adalah 1, maka loop yang di cek hanya kotak tidak pasti saja
-            for (Koordinat k : MosaicGA.daftarKotakTidakPasti) {
-                //ambil baris (y) dan kolom (x) dari cell di kotak tidak pasti nya saja
-                int y = k.getY();
-                int x = k.getX();
-
-                //inisialisasi rnd sebagai random yg akan dipakai saat pemilihan anak (rentang nilai 0.0 sampai 1.0)
-                double rnd = rand.nextDouble();
-
-                if (rnd < 0.5) { //jika rnd kurang dari 0.5, maka anak1 akan diisi oleh kotak parent1 (this), dan anak2 diisi oleh kotak parent2 (other)
-                    anak1.kromosom[y][x] = this.kromosom[y][x];
-                    anak2.kromosom[y][x] = other.kromosom[y][x];
-                } else {//jika rnd lebih besar sama dengan  0.5 (>=0.5), maka anak1 akan diisi oleh kotak parent2 (other), dan anak2 diisi oleh kotak parent1 (this)
-                    anak1.kromosom[y][x] = other.kromosom[y][x];
-                    anak2.kromosom[y][x] = this.kromosom[y][x];
-                }
-            }
-            return new Individu[]{anak1, anak2};//return anak1 dan anak2
-        } else{
-            //ambil nilai kolom dan baris yg dimiliki oleh mosaic puzzle
-            int rows = MosaicGA.baris;
-            int cols = MosaicGA.kolom;
-
-            //loop setiap kotak di mosaic puzzle
-            for(int y = 0; y < rows; y++){
-                for(int x = 0; x < cols; x++){
-                    //inisialisasi rnd sebagai random yg akan dipakai saat pemilihan anak (rentang nilai 0.0 sampai 1.0)
-                    double rnd = rand.nextDouble();
-
-                    if (rnd < 0.5) { //jika rnd kurang dari 0.5, maka anak1 akan diisi oleh kotak parent1 (this), dan anak2 diisi oleh kotak parent2 (other)
-                        anak1.kromosom[y][x] = this.kromosom[y][x];
-                        anak2.kromosom[y][x] = other.kromosom[y][x];
-                    } else {//jika rnd lebih besar sama dengan  0.5 (>=0.5), maka anak1 akan diisi oleh kotak parent2 (other), dan anak2 diisi oleh kotak parent1 (this)
-                        anak1.kromosom[y][x] = other.kromosom[y][x];
-                        anak2.kromosom[y][x] = this.kromosom[y][x];
-                    }
-                }
-            }
-            return new Individu[]{anak1, anak2};
-        }
-    }
+//    public Individu[] crossoverUniformVariations(Individu other, int type){
+//        //inisialisasi anak1 dan anak2 terlebih dahulu
+//        Individu anak1 = new Individu(this.rand);
+//        Individu anak2 = new Individu(this.rand);
+//
+//        if(type == 1){ // jika tipe nya adalah 1, maka loop yang di cek hanya kotak tidak pasti saja
+//            for (Koordinat k : MosaicGA.daftarKotakTidakPasti) {
+//                //ambil baris (y) dan kolom (x) dari cell di kotak tidak pasti nya saja
+//                int y = k.getY();
+//                int x = k.getX();
+//
+//                //inisialisasi rnd sebagai random yg akan dipakai saat pemilihan anak (rentang nilai 0.0 sampai 1.0)
+//                double rnd = rand.nextDouble();
+//
+//                if (rnd < 0.5) { //jika rnd kurang dari 0.5, maka anak1 akan diisi oleh kotak parent1 (this), dan anak2 diisi oleh kotak parent2 (other)
+//                    anak1.kromosom[y][x] = this.kromosom[y][x];
+//                    anak2.kromosom[y][x] = other.kromosom[y][x];
+//                } else {//jika rnd lebih besar sama dengan  0.5 (>=0.5), maka anak1 akan diisi oleh kotak parent2 (other), dan anak2 diisi oleh kotak parent1 (this)
+//                    anak1.kromosom[y][x] = other.kromosom[y][x];
+//                    anak2.kromosom[y][x] = this.kromosom[y][x];
+//                }
+//            }
+//            return new Individu[]{anak1, anak2};//return anak1 dan anak2
+//        } else{
+//            //ambil nilai kolom dan baris yg dimiliki oleh mosaic puzzle
+//            int rows = MosaicGA.baris;
+//            int cols = MosaicGA.kolom;
+//
+//            //loop setiap kotak di mosaic puzzle
+//            for(int y = 0; y < rows; y++){
+//                for(int x = 0; x < cols; x++){
+//                    //inisialisasi rnd sebagai random yg akan dipakai saat pemilihan anak (rentang nilai 0.0 sampai 1.0)
+//                    double rnd = rand.nextDouble();
+//
+//                    if (rnd < 0.5) { //jika rnd kurang dari 0.5, maka anak1 akan diisi oleh kotak parent1 (this), dan anak2 diisi oleh kotak parent2 (other)
+//                        anak1.kromosom[y][x] = this.kromosom[y][x];
+//                        anak2.kromosom[y][x] = other.kromosom[y][x];
+//                    } else {//jika rnd lebih besar sama dengan  0.5 (>=0.5), maka anak1 akan diisi oleh kotak parent2 (other), dan anak2 diisi oleh kotak parent1 (this)
+//                        anak1.kromosom[y][x] = other.kromosom[y][x];
+//                        anak2.kromosom[y][x] = this.kromosom[y][x];
+//                    }
+//                }
+//            }
+//            return new Individu[]{anak1, anak2};
+//        }
+//    }
 
     public ArrayList<int[][]> cutBoardInto4Pieces() {
         int kromosomSize = kromosom.length;

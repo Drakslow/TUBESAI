@@ -133,15 +133,15 @@ public class Populasi {
 
         while (!newPop.isFilled()) {
             //pilih parent selection
-            Individu[] parents = ParentSelection.rouletteWheel(rand, populasi);
+//            Individu[] parents = ParentSelection.rouletteWheel(rand, populasi);
 //            Individu[] parents = ParentSelection.rankSelection(rand, populasi);
-//            Individu[] parents = ParentSelection.tournamentSelection(rand, populasi);
+            Individu[] parents = ParentSelection.tournamentSelection(rand, populasi);
 
             //hanya 2 parent yang akan dipilih dan menghasilkan 2 children baru
 
             Individu[] children;
             if (rand.nextDouble() < crossoverRate) { //lakukan crossover
-                children = parents[0].crossoverUniformVariations(parents[1], 2);
+                children = parents[0].crossover(parents[1]);
             }
             else { //crossover gagal
                 //anaknya copy dari orang tua
