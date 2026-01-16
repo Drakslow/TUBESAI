@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.Random;
 
 /**
@@ -69,6 +70,48 @@ public class Individu implements Comparable<Individu> {
         for (int i = 0; i < MosaicGA.baris; i++) {
             System.arraycopy(other.kromosom[i], 0, this.kromosom[i], 0, MosaicGA.kolom);
         }
+    }
+
+    public ArrayList<int[][]> cutBoardInto4Pieces() {
+        int kromosomSize = kromosom.length;
+        int mid = (kromosomSize + 1) / 2; // untuk ganjil dan genap
+
+        ArrayList<int[][]> result = new ArrayList<>();
+
+        // kiri atas
+        result.add(copyPiece(0, 0, mid));
+
+        // kanan atas
+        result.add(copyPiece(0, kromosomSize - mid, mid));
+
+        // kiri bawah
+        result.add(copyPiece(kromosomSize - mid, 0, mid));
+
+        // kanan bawah
+        result.add(copyPiece(kromosomSize - mid, kromosomSize - mid, mid));
+
+        return result;
+    }
+
+    private int[][] copyPiece(int rowStart, int colStart, int size) {
+        int[][] piece = new int[size][size];
+
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                int r = rowStart + i;
+                int c = colStart + j;
+
+                if (r >= 0 && r < kromosom.length &&
+                        c >= 0 && c < kromosom.length) {
+                    piece[i][j] = kromosom[r][c];
+                }
+                else {
+                    piece[i][j] = 0; // padding
+                }
+            }
+        }
+
+        return piece;
     }
 
     /**
@@ -262,10 +305,31 @@ public class Individu implements Comparable<Individu> {
         return new Individu[]{anak1, anak2};
     }
 
+
+    private Individu[] crossoverHorizontal(Individu other) {
+        Individu anak1 = new Individu(this.rand);
+        Individu anak2 = new Individu(this.rand);
+
+        int lokasiCut = rand.nextInt(MosaicGA.baris);
+
+        for (int y = 0; y < MosaicGA.baris; y++) {
+            for (int x = 0; x < MosaicGA.kolom; x++) {
+                if (MosaicGA.fixedBoard[y][x] != -1) continue;
+                if (y < lokasiCut) {
+                    anak1.kromosom[y][x] = this.kromosom[y][x];
+                    anak2.kromosom[y][x] = other.kromosom[y][x];
+                } else {
+                    anak1.kromosom[y][x] = other.kromosom[y][x];
+                    anak2.kromosom[y][x] = this.kromosom[y][x];
+                }
+            }
+        }
+        return new Individu[]{anak1, anak2};
+    }
     /**
      * Melakukan Crossover Diagonal dengan Variasi.
      * * @param other Pasangan (Induk B)
-     * 
+     *
      * @param type 1 = One-Point (Belah Miring),
      *             2 = Two-Point (Pita Miring),
      *             3 = Uniform (Acak per Garis Miring)
