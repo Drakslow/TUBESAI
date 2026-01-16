@@ -35,10 +35,6 @@ public class MosaicGA {
      */
     protected static int[][] fixedBoard;
 
-    /**
-     * list yang menyimpan koordinat kotak belum pasti
-     */
-    private static ArrayList<Koordinat> daftarKotakTidakPasti;
 
     /**
      * variable untuk menyimpan total kemungkinan maksimal eror yang dapat terjadi
@@ -85,20 +81,11 @@ public class MosaicGA {
                 }
             }
         }
-        
-        // ambil kotak yg masih null dari map td dan masukkan ke daftarKotakTidakPasti 
-        daftarKotakTidakPasti = new ArrayList<>();
+
         for (int y = 0; y < baris; y++) {
             for (int x = 0; x < kolom; x++) {
-                if (fixedBoard[y][x] == -1) {
-                    if (disekitarClue(x, y)) {
-                        //jika penting, masukin ke kromosom
-                        daftarKotakTidakPasti.add(new Koordinat(x, y));
-                    }else{
-                        // Jika terisolasi (tidak ada guna)
-                        fixedBoard[y][x] = 0;
-                    }
-
+                if (fixedBoard[y][x] == -1 && !disekitarClue(x, y)) {
+                    fixedBoard[y][x] = 0; // terisolasi berarti putih
                 }
             }
         }
@@ -279,7 +266,7 @@ public class MosaicGA {
      * @throws FileNotFoundException throw file input yang tidak ditemukan
      */
     public static void main(String[] args) throws FileNotFoundException {
-            File file = new File("./Input/20x20/input4.txt");
+            File file = new File("./Input/20x20/input1.txt");
             Scanner sc = new Scanner(file);
             baris = sc.nextInt();
             kolom = sc.nextInt();
@@ -301,8 +288,8 @@ public class MosaicGA {
 //            double elitismRate = sc.nextDouble();// presentase individu terbaik akan disimpan ke generasi berikutnya
 //            double mutationRate = sc.nextDouble();//probabilitas gen pada kromosom mengalami mutasi
 
-            int maxGenerations = 1000;// maksimal generasi yang akan dimiliki oleh GA
-            int populasiSize = 500; // banyak individu dalam 1 populasi
+            int maxGenerations = 10000;// maksimal generasi yang akan dimiliki oleh GA
+            int populasiSize = 1000; // banyak individu dalam 1 populasi
             double crossoverRate = 0.8;// probabilitas kemungkinan parents melakukan crossover
             double elitismRate = 0.1;// presentase individu terbaik akan disimpan ke generasi berikutnya
             double mutationRate = 0.035;//probabilitas gen pada kromosom mengalami mutasi
@@ -375,12 +362,4 @@ public class MosaicGA {
         printYgMasihError(finalBoard);
     }
 
-    /**
-     * Mengambil ukuran kromosom (banyak kotak yang tidak pasti)
-     *
-     * @return jumlah kotak yang tidak pasti
-     */
-    public static int getChromosomeSize() {
-        return daftarKotakTidakPasti.size();
-    }
 }
