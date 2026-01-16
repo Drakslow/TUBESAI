@@ -111,6 +111,39 @@ public class Individu implements Comparable<Individu> {
     }
 
     /**
+     * Crossover Block - Membuat persegi panjang random yang akan ditukar dengan individu lain
+     *
+     * @param other pasangan crossover
+     * @return 2 anak hasil crossover
+     */
+    public Individu[] crossoverBlock(Individu other) {
+        Individu anak1 = new Individu(this.rand);
+        Individu anak2 = new Individu(this.rand);
+
+        int y1 = rand.nextInt(MosaicGA.baris);
+        int y2 = y1 + rand.nextInt(MosaicGA.baris - y1);
+        int x1 = rand.nextInt(MosaicGA.kolom);
+        int x2 = x1 + rand.nextInt(MosaicGA.kolom - x1);
+
+        for (int y = 0; y < MosaicGA.baris; y++) {
+            for (int x = 0; x < MosaicGA.kolom; x++) {
+                if (MosaicGA.fixedBoard[y][x] != -1) continue;
+
+                boolean inBlock = (y >= y1 && y <= y2 && x >= x1 && x <= x2);
+
+                if (inBlock) {
+                    anak1.kromosom[y][x] = this.kromosom[y][x];
+                    anak2.kromosom[y][x] = other.kromosom[y][x];
+                } else {
+                    anak1.kromosom[y][x] = other.kromosom[y][x];
+                    anak2.kromosom[y][x] = this.kromosom[y][x];
+                }
+            }
+        }
+        return new Individu[]{anak1, anak2};
+    }
+    
+    /**
      * Crossover Vertical - Memotong secara vertikal
      *
      * @param other pasangan crossover
@@ -134,6 +167,98 @@ public class Individu implements Comparable<Individu> {
                 }
             }
         }
+        return new Individu[]{anak1, anak2};
+    }
+
+    /**
+     * Crossover Stripe - Pola garis-garis bergantian
+     *
+     * @param other pasangan crossover
+     * @return 2 anak hasil crossover
+     */
+    private Individu[] crossoverStripe(Individu other) {
+        Individu anak1 = new Individu(this.rand);
+        Individu anak2 = new Individu(this.rand);
+
+        // Lebar stripe (bisa random 1-2)
+        int lebarGaris = rand.nextInt(2) + 1;
+
+        for (int y = 0; y < MosaicGA.baris; y++) {
+            for (int x = 0; x < MosaicGA.kolom; x++) {
+                boolean ortu1;
+                
+                ortu1 = (x / lebarGaris) % 2 == 0;
+
+                if (ortu1) {
+                    anak1.kromosom[y][x] = this.kromosom[y][x];
+                    anak2.kromosom[y][x] = other.kromosom[y][x];
+                } else {
+                    anak1.kromosom[y][x] = other.kromosom[y][x];
+                    anak2.kromosom[y][x] = this.kromosom[y][x];
+                }
+            }
+        }
+
+        return new Individu[]{anak1, anak2};
+    }
+
+    /**
+     * Crossover Multi-Cross - Beberapa titik random dengan 4 tetangga (atas, bawah, kiri, kanan)
+     * Jumlah cross point: minimal 7 + (baris / 5)
+     *
+     * @param other pasangan crossover
+     * @return 2 anak hasil crossover
+     */
+    private Individu[] crossoverMultiCross(Individu other) {
+        Individu anak1 = new Individu(this.rand);
+        Individu anak2 = new Individu(this.rand);
+
+        // Jumlah cross dinamis berdasarkan ukuran board
+        int minCrosses = 7 + (MosaicGA.baris / 5);
+        int nCross = minCrosses + rand.nextInt(5); // minCrosses sampai minCrosses+4
+
+        int[][] crossPoints = new int[nCross][2]; // [i][0] = y, [i][1] = x
+
+        for (int i = 0; i < nCross; i++) {
+            crossPoints[i][0] = rand.nextInt(MosaicGA.baris);
+            crossPoints[i][1] = rand.nextInt(MosaicGA.kolom);
+        }
+
+        // Fill kromosom
+        for (int y = 0; y < MosaicGA.baris; y++) {
+            for (int x = 0; x < MosaicGA.kolom; x++) {
+                if (MosaicGA.fixedBoard[y][x] != -1) continue;
+
+                boolean isCrossPoint = false;
+
+                // Cek apakah (y,x) adalah salah satu cross point atau tetangganya
+                for (int i = 0; i < nCross; i++) {
+                    int cy = crossPoints[i][0];
+                    int cx = crossPoints[i][1];
+
+                    // Cek apakah ini pusat cross atau salah satu dari 4 tetangga
+                    if ((y == cy && x == cx) ||      // Pusat
+                            (y == cy && x == cx + 1) ||  // Kanan
+                            (y == cy && x == cx - 1) ||  // Kiri
+                            (y == cy + 1 && x == cx) ||  // Bawah
+                            (y == cy - 1 && x == cx)) {  // Atas
+
+                        isCrossPoint = true;
+                        break;
+                    }
+                }
+
+                // Switch parent jika ketemu cross point
+                if (isCrossPoint) {
+                    anak1.kromosom[y][x] = other.kromosom[y][x];
+                    anak2.kromosom[y][x] = this.kromosom[y][x];
+                } else {
+                    anak1.kromosom[y][x] = this.kromosom[y][x];
+                    anak2.kromosom[y][x] = other.kromosom[y][x];
+                }
+            }
+        }
+
         return new Individu[]{anak1, anak2};
     }
 
