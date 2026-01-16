@@ -1,6 +1,4 @@
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.PrintStream;
+import java.io.*;
 import java.util.*;
 
 /**
@@ -47,16 +45,14 @@ public class MosaicGA {
      */
     private static double probMaxError;
 
-
     /**
      * logika heuristik awal untuk mengisi fixedBoard dan daftarKotakTidakPasti dengan menerapkan trik bermain
      */
-
     private static void runHeuristics() { //method untuk menerapkan aturan trik permainan
         //TODO: kenapa harus pakai while? cukup sekali loop tidak bisa?
 
         boolean berubah = true;// flag untuk mengecek apakah ada perubahan pada iterasi terakhir
-        while (berubah) { //loop sampai tidak ada perubahan lagi
+        while(berubah) { //loop sampai tidak ada perubahan lagi
             berubah = false;
 
             //loop setiap kotak di papan, dan jika ada menyinggung aturan permainan, maka tetangga2nya di set sesuai aturan
@@ -66,19 +62,22 @@ public class MosaicGA {
                     int valueKotak = map[y][x];
                     if (valueKotak == -1) {//jika kotak ber angka -1 lanjut aja
                         continue;
-                    } else if (valueKotak == 0) {//jika kotak ber angka 0, maka semua tetangga dan diriny sendiri putih (0)
+                    }else if (valueKotak == 0) {//jika kotak ber angka 0, maka semua tetangga dan diriny sendiri putih (0)
                         if (setNeighbors(x, y, 0)) {
                             berubah = true;
                         }
-                    } else if (valueKotak == 9) {//jika kotak ber angka 9, maka semua tetangga dan diriny sendiri hitam (1)
+                    }
+                    else if (valueKotak == 9) {//jika kotak ber angka 9, maka semua tetangga dan diriny sendiri hitam (1)
                         if (setNeighbors(x, y, 1)) {
                             berubah = true;
                         }
-                    } else if (valueKotak == 4 && isCorner(x, y)) {//jika kotak ber angka 4 dan di sudut, maka semua tetangga dan diriny sendiri hitam (1)
+                    }
+                    else if (valueKotak == 4 && isCorner(x, y)) {//jika kotak ber angka 4 dan di sudut, maka semua tetangga dan diriny sendiri hitam (1)
                         if (setNeighbors(x, y, 1)) {
                             berubah = true;
                         }
-                    } else if (valueKotak == 6 && isEdge(x, y)) {//jika kotak ber angka 6 dan di bagian sisi, maka semua tetangga dan diriny sendiri hitam (1)
+                    }
+                    else if (valueKotak == 6 && isEdge(x, y)) {//jika kotak ber angka 6 dan di bagian sisi, maka semua tetangga dan diriny sendiri hitam (1)
                         if (setNeighbors(x, y, 1)) {
                             berubah = true;
                         }
@@ -86,7 +85,7 @@ public class MosaicGA {
                 }
             }
         }
-
+        
         // ambil kotak yg masih null dari map td dan masukkan ke daftarKotakTidakPasti 
         daftarKotakTidakPasti = new ArrayList<>();
         for (int y = 0; y < baris; y++) {
@@ -95,7 +94,7 @@ public class MosaicGA {
                     if (disekitarClue(x, y)) {
                         //jika penting, masukin ke kromosom
                         daftarKotakTidakPasti.add(new Koordinat(x, y));
-                    } else {
+                    }else{
                         // Jika terisolasi (tidak ada guna)
                         fixedBoard[y][x] = 0;
                     }
@@ -141,7 +140,7 @@ public class MosaicGA {
      * @return berada di sisi: True, tidak berada di sisi: False
      */
     private static boolean isCorner(int x, int y) {//method untuk cek apakah koordinat (x,y) di bagian sudut
-        if ((x == 0 || x == kolom - 1) && (y == 0 || y == baris - 1)) {
+        if((x==0 || x==kolom-1) && (y==0 || y==baris-1)) {
             return true;
         } else {
             return false;
@@ -156,7 +155,7 @@ public class MosaicGA {
      * @return berada di sudut: True, tidak berada di sudut: False
      */
     private static boolean isEdge(int x, int y) {//method untuk cek apakah koordinat (x,y) di bagian sisi
-        if ((!isCorner(x, y)) && ((x == 0 || x == kolom - 1) || (y == 0 || y == baris - 1))) {
+        if( (!isCorner(x, y) ) && ( (x==0 || x==kolom-1) || (y==0 || y==baris-1) ) ) {
             return true;
         } else {
             return false;
@@ -168,7 +167,7 @@ public class MosaicGA {
      *
      * @param posisiX koordinat x sebuah kotak
      * @param posisiY koordinat y sebuah kotak
-     * @param warna   warna pada kotak, 0 (putih) atau 1 (hitam)
+     * @param warna warna pada kotak, 0 (putih) atau 1 (hitam)
      * @return menambahkan warna di tetangg: True, tidak menambahkan warna di tetangg: False
      */
     private static boolean setNeighbors(int posisiX, int posisiY, int warna) {
@@ -183,7 +182,7 @@ public class MosaicGA {
                     if (fixedBoard[nilaiY][nilaiX] == -1) {//jika kotak belum di set (masih null), maka set warna nya
                         fixedBoard[nilaiY][nilaiX] = warna;
                         perubahan = true;
-                    }
+                    } 
                 }
             }
         }
@@ -235,12 +234,13 @@ public class MosaicGA {
             for (int x = 0; x < kolom; x++) {
                 int clue = map[y][x]; //ambil value dr kotak nya
                 if (clue == -1) continue; //kalo isinya -1 lanjut aja (di skip)
+                
                 int currentBlacks = hitungHitam(chromosome, x, y); //ambil banyak hitam dari kotak clue sekarang
                 totalError += Math.abs(currentBlacks - clue); //cek berapa banyak selisih antara hitam sekarang dan clue
             }
         }
         //hitung fitness berdasarkan total error (semakin besar fitnessnya semakin baik)
-        double fitness = (probMaxError - (double) totalError + 1) / (probMaxError + 1);
+        double fitness = (probMaxError - (double)totalError + 1) / (probMaxError+1);
 
         // Jaga jaga agar tidak return hasil negatif
         return Math.max(0.0, fitness);
@@ -249,12 +249,12 @@ public class MosaicGA {
     /**
      * Menghitung jumlah kotak berwarna hitam di tetangga dan diri sendiri
      *
-     * @param board   board yang menyimpan 0, 1, atau null
+     * @param board board yang menyimpan 0, 1, atau null
      * @param posisiX koordinat x sebuah kotak
      * @param posisiY koordinat y sebuah kotak
      * @return jumlah hitam pada tetangga kotak dan diri sendiri
      */
-    private static int hitungHitam(int[][] board, int posisiX, int posisiY) {
+    private static int hitungHitam(int[][] board, int posisiX, int posisiY){
         int count = 0;
         //loop tetangga termasuk dirinya sendiri (3x3)
         for (int cekY = -1; cekY <= 1; cekY++) {
@@ -265,7 +265,7 @@ public class MosaicGA {
                 if (nilaiX >= 0 && nilaiX < kolom && nilaiY >= 0 && nilaiY < baris) {//cek apabila masih masuk ke dalam peta
                     if (board[nilaiY][nilaiX] == 1) {//jika kotak bernilai 1 (warna hitam), maka count akan bertambah
                         count++;
-                    }
+                    } 
                 }
             }
         }
@@ -314,7 +314,7 @@ public class MosaicGA {
             probMaxError = (double) hitungMaxError();
 
             MosaicAlgoGA GA = new MosaicAlgoGA(rnd, populasiSize, maxGenerations, mutationRate, elitismRate, crossoverRate);
-            
+
             long mulai = System.currentTimeMillis();
             Individu bestSolution = GA.run();
             long akhir = System.currentTimeMillis();
@@ -334,47 +334,8 @@ public class MosaicGA {
 
             printBestSolution(bestSolution.kromosom);
 
+
     }
-
-    static class BestFEntry {
-        int inputIndex;   // indeks asli (0-based)
-        double value;
-
-        BestFEntry(int inputIndex, double value) {
-            this.inputIndex = inputIndex;
-            this.value = value;
-        }
-    }
-
-    private static void harmonicMean2D(double[][] data) {
-        int jumlahInput = data.length;        // 20
-        int jumlahGenerasi = data[0].length;  // 5001
-
-        for (int gen = 0; gen < jumlahGenerasi; gen++) {
-            double sumPenyebut = 0.0;
-
-            for (int input = 0; input < jumlahInput; input++) {
-                sumPenyebut += 1.0 / data[input][gen];
-            }
-
-            double hm = jumlahInput / sumPenyebut;
-
-            System.out.printf("Generasi %4d : %.6f\n", gen, hm);
-        }
-    }
-
-
-    private static double harmonicMean(double[] data) {
-        double sumPenyebut = 0.0;
-        int n = data.length;
-
-        for (double x : data) {
-            sumPenyebut += 1.0 / x;
-        }
-
-        return n / sumPenyebut;
-    }
-
 
     /**
      * Print jumlah hitam yang sebenarnya dan jumlah hitam yang dikerjakan oleh genetic algorithm

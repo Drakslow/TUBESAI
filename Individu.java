@@ -49,13 +49,13 @@ public class Individu implements Comparable<Individu> {
             }
         }
     }
-
     /**
      * Construct individu baru dengan seed random dan ukuran kromosom
      * setiap gen dirandomisasi untuk menentukan isi gen 0 atau 1
      *
      * @param rand objek random dengan seed
      */
+
 
     /**
      * Construct individu baru dengan menyalin individu lain
@@ -69,6 +69,61 @@ public class Individu implements Comparable<Individu> {
 
         for (int i = 0; i < MosaicGA.baris; i++) {
             System.arraycopy(other.kromosom[i], 0, this.kromosom[i], 0, MosaicGA.kolom);
+        }
+    }
+
+    /*
+     * Method untuk melakukan uniform crossover dengan variasi pada kotak tidak pasti saja
+     *
+     * @param other adalah objek Individu yang menyimpan informasi individu (parent) lain
+     * @param type adalah tipe crossover, 1 = hanya pada kotak tidak pasti, 2 = pada semua kotak
+     *
+     * @return 2 anak hasil crossover yang disimpan dalam array of Individu
+     */
+    public Individu[] crossoverUniformVariations(Individu other, int type){
+        //inisialisasi anak1 dan anak2 terlebih dahulu
+        Individu anak1 = new Individu(this.rand);
+        Individu anak2 = new Individu(this.rand);
+
+        if(type == 1){ // jika tipe nya adalah 1, maka loop yang di cek hanya kotak tidak pasti saja
+            for (Koordinat k : MosaicGA.daftarKotakTidakPasti) {
+                //ambil baris (y) dan kolom (x) dari cell di kotak tidak pasti nya saja
+                int y = k.getY();
+                int x = k.getX();
+
+                //inisialisasi rnd sebagai random yg akan dipakai saat pemilihan anak (rentang nilai 0.0 sampai 1.0)
+                double rnd = rand.nextDouble();
+
+                if (rnd < 0.5) { //jika rnd kurang dari 0.5, maka anak1 akan diisi oleh kotak parent1 (this), dan anak2 diisi oleh kotak parent2 (other)
+                    anak1.kromosom[y][x] = this.kromosom[y][x];
+                    anak2.kromosom[y][x] = other.kromosom[y][x];
+                } else {//jika rnd lebih besar sama dengan  0.5 (>=0.5), maka anak1 akan diisi oleh kotak parent2 (other), dan anak2 diisi oleh kotak parent1 (this)
+                    anak1.kromosom[y][x] = other.kromosom[y][x];
+                    anak2.kromosom[y][x] = this.kromosom[y][x];
+                }
+            }
+            return new Individu[]{anak1, anak2};//return anak1 dan anak2
+        } else{
+            //ambil nilai kolom dan baris yg dimiliki oleh mosaic puzzle
+            int rows = MosaicGA.baris;
+            int cols = MosaicGA.kolom;
+
+            //loop setiap kotak di mosaic puzzle
+            for(int y = 0; y < rows; y++){
+                for(int x = 0; x < cols; x++){
+                    //inisialisasi rnd sebagai random yg akan dipakai saat pemilihan anak (rentang nilai 0.0 sampai 1.0)
+                    double rnd = rand.nextDouble();
+
+                    if (rnd < 0.5) { //jika rnd kurang dari 0.5, maka anak1 akan diisi oleh kotak parent1 (this), dan anak2 diisi oleh kotak parent2 (other)
+                        anak1.kromosom[y][x] = this.kromosom[y][x];
+                        anak2.kromosom[y][x] = other.kromosom[y][x];
+                    } else {//jika rnd lebih besar sama dengan  0.5 (>=0.5), maka anak1 akan diisi oleh kotak parent2 (other), dan anak2 diisi oleh kotak parent1 (this)
+                        anak1.kromosom[y][x] = other.kromosom[y][x];
+                        anak2.kromosom[y][x] = this.kromosom[y][x];
+                    }
+                }
+            }
+            return new Individu[]{anak1, anak2};
         }
     }
 
@@ -494,17 +549,15 @@ public class Individu implements Comparable<Individu> {
     /**
      * Melakukan mutasi untuk pada individu
      *
-     * @param mutationRate peluang mutasi untuk setiap gen kecuali yang sudah tetap
+     * @param mutationRate peluang mutasi untuk setiap gen
      */
     public void mutation(double mutationRate) {
-        // lakukan mutasi di setiap gen
+        //lakukan mutasi di setiap gen
         for (int y = 0; y < MosaicGA.baris; y++) {
             for (int x = 0; x < MosaicGA.kolom; x++) {
-                //Skrip mutasi kalau cell nya sudah ad di fixedboard
-                if (MosaicGA.fixedBoard[y][x] != -1)
-                    continue;
+                if (MosaicGA.fixedBoard[y][x] != -1) continue;
                 if (rand.nextDouble() < mutationRate) {
-                    // mutasi lgsg flip bitnya
+                    //mutasi lgsg flip bitnya
                     kromosom[y][x] = kromosom[y][x] == 1 ? 0 : 1;
                 }
             }
@@ -517,7 +570,7 @@ public class Individu implements Comparable<Individu> {
      * @return value fitness pada individu
      */
     public double setFitness() {
-        // set fitness untuk individu ini
+        //set fitness untuk individu ini
         this.fitness = MosaicGA.calcFitness(this.kromosom);
         return this.fitness;
     }
