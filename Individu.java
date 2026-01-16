@@ -122,36 +122,32 @@ public class Individu implements Comparable<Individu> {
      * @return 2 anak hasil crossover yang disimpan dalam array of Individu
      */
     public Individu[] crossover(Individu other) {
-        int crossoverType = 1; // Ubah tipe crossover di sini (1-8)
+        int crossoverType = 7; // Ubah tipe crossover di sini (1-10)
 
-        if (crossoverType == 1){
-            return crossoverDiagonalVariations(other, 1); // One-Point Diagonal
-        }else if (crossoverType == 2){
-            return crossoverDiagonalVariations(other, 2); // Two-Point Diagonal
-        }else{
-            return crossoverDiagonalVariations(other, 3); // Uniform Diagonal
+        switch (crossoverType) {
+            case 1:
+                return crossoverHorizontal(other);
+            case 2:
+                return crossoverVertical(other);
+            case 3:
+                return crossoverBlock(other);
+            case 4:
+                return crossoverStripe(other);
+            case 5:
+                return crossoverMultiCross(other);
+            case 6:
+                return piecesCrossover(other);
+            case 7:
+                return crossoverDiagonalVariations(other, 1); // One-Point Diagonal
+            case 8:
+                return crossoverDiagonalVariations(other, 2); // Two-Point Diagonal
+            case 9:
+                return crossoverDiagonalVariations(other, 3); // Uniform Diagonal
+            default:
+                return crossoverDiagonalVariations(other, 3); // Default ke Uniform Diagonal
         }
-//        switch (crossoverType) {
-//            case 1:
-//                return crossoverHorizontal(other);
-//            case 2:
-//                return crossoverVertical(other);
-//            case 3:
-//                return crossoverBlock(other);
-//            case 4:
-//                return crossoverUniform(other);
-//            case 5:
-//                return crossoverQuadrant(other);
-//            case 6:
-//                return crossoverDiagonalVariations(other, 1); // One-Point Diagonal
-//            case 7:
-//                return crossoverDiagonalVariations(other, 2); // Two-Point Diagonal
-//            case 8:
-//                return crossoverDiagonalVariations(other, 3); // Uniform Diagonal
-//            default:
-//                return crossoverUniform(other); // Default ke uniform
-//        }
     }
+
 
     /**
      * Crossover Block - Membuat persegi panjang random yang akan ditukar dengan individu lain
