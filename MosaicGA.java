@@ -41,7 +41,7 @@ public class MosaicGA {
      */
     private static double probMaxError;
 
-    static double generasiBestF[][] = new double[20][10001];
+    static double generasiBestF[][] = new double[20][5000];
     static double minimumFitness = Double.MAX_VALUE;
     static double waktuPerInput[] = new double[20];
     static double generasiPerInput[] = new double[20];
@@ -302,11 +302,11 @@ public class MosaicGA {
 //            double elitismRate = sc.nextDouble();// presentase individu terbaik akan disimpan ke generasi berikutnya
 //            double mutationRate = sc.nextDouble();//probabilitas gen pada kromosom mengalami mutasi
 
-            int maxGenerations = 10000;// maksimal generasi yang akan dimiliki oleh GA
+            int maxGenerations = 5000;// maksimal generasi yang akan dimiliki oleh GA
             int populasiSize = 500; // banyak individu dalam 1 populasi
             double crossoverRate = 0.8;// probabilitas kemungkinan parents melakukan crossover
             double elitismRate = 0.1;// presentase individu terbaik akan disimpan ke generasi berikutnya
-            double mutationRate = 0.035;//probabilitas gen pada kromosom mengalami mutasi
+            double mutationRate = 0.015;//probabilitas gen pada kromosom mengalami mutasi
 
             //Melakukan preprocessing
             runHeuristics();
@@ -371,6 +371,30 @@ public class MosaicGA {
         System.out.println(harmonicMean(generasiPerInput));
         System.out.println();
 
+        System.out.println();
+        System.out.println("==== Min Generation per Input (Ranking) ====");
+
+// ubah array jadi list of pair
+        List<BestFEntry> genList = new ArrayList<>();
+        for (int i = 0; i < 20; i++) {
+            genList.add(new BestFEntry(i, generasiPerInput[i]));
+        }
+
+// sort ASCENDING (paling kecil = paling cepat)
+        genList.sort((a, b) -> Double.compare(a.value, b.value));
+
+        for (int rank = 0; rank < genList.size(); rank++) {
+            BestFEntry e = genList.get(rank);
+            System.out.printf(
+                    "%2d. Input %2d (index %2d) = %.0f generasi%n",
+                    rank + 1,
+                    e.inputIndex + 1,   // input 1-based
+                    e.inputIndex,       // indeks asli
+                    e.value
+            );
+        }
+
+        System.out.println();
         System.out.println("==== Harmonic Mean Best Fitness Per Input ====");
         System.out.println(harmonicMean(bestFPerInput));
         System.out.println();
@@ -394,7 +418,7 @@ public class MosaicGA {
                     e.value
             );
         }
-
+        System.out.println();
 
         System.out.println("==== Harmonic Mean Generasi Best Fitness ====");
         harmonicMean2D(generasiBestF);
@@ -416,7 +440,7 @@ public class MosaicGA {
 
             double hm = jumlahInput / sumPenyebut;
 
-            System.out.printf("Generasi %4d : %.6f\n", gen, hm);
+            System.out.printf("Generasi %4d : %.6f\n", gen+1, hm);
         }
     }
 

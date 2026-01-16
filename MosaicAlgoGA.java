@@ -97,7 +97,7 @@ public class MosaicAlgoGA {
             currentPop.calcAllFitnesses();
 
             //Eksperimen
-            MosaicGA.generasiBestF[MosaicGA.counterInput][generation]=currentPop.getBestIdv().getFitness();
+            MosaicGA.generasiBestF[MosaicGA.counterInput][generation-1]=currentPop.getBestIdv().getFitness();
 
 
             generation++;
