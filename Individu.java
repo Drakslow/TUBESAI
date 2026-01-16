@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.Random;
 
 /**
@@ -69,6 +70,48 @@ public class Individu implements Comparable<Individu> {
         for (int i = 0; i < MosaicGA.baris; i++) {
             System.arraycopy(other.kromosom[i], 0, this.kromosom[i], 0, MosaicGA.kolom);
         }
+    }
+
+    public ArrayList<int[][]> cutBoardInto4Pieces() {
+        int kromosomSize = kromosom.length;
+        int mid = (kromosomSize + 1) / 2; // untuk ganjil dan genap
+
+        ArrayList<int[][]> result = new ArrayList<>();
+
+        // kiri atas
+        result.add(copyPiece(0, 0, mid));
+
+        // kanan atas
+        result.add(copyPiece(0, kromosomSize - mid, mid));
+
+        // kiri bawah
+        result.add(copyPiece(kromosomSize - mid, 0, mid));
+
+        // kanan bawah
+        result.add(copyPiece(kromosomSize - mid, kromosomSize - mid, mid));
+
+        return result;
+    }
+
+    private int[][] copyPiece(int rowStart, int colStart, int size) {
+        int[][] piece = new int[size][size];
+
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                int r = rowStart + i;
+                int c = colStart + j;
+
+                if (r >= 0 && r < kromosom.length &&
+                        c >= 0 && c < kromosom.length) {
+                    piece[i][j] = kromosom[r][c];
+                }
+                else {
+                    piece[i][j] = 0; // padding
+                }
+            }
+        }
+
+        return piece;
     }
 
     /**
@@ -286,7 +329,7 @@ public class Individu implements Comparable<Individu> {
     /**
      * Melakukan Crossover Diagonal dengan Variasi.
      * * @param other Pasangan (Induk B)
-     * 
+     *
      * @param type 1 = One-Point (Belah Miring),
      *             2 = Two-Point (Pita Miring),
      *             3 = Uniform (Acak per Garis Miring)
@@ -378,6 +421,80 @@ public class Individu implements Comparable<Individu> {
         return new Individu[] { anak1, anak2 };
     }
 
+
+    /**
+     * Melakukan crossover dengan 3 tipe, yaitu single-point, two-point, dan uniform crossover
+     *
+     * @param other objek Individu yang menyimpan informasi individu lain
+     * @return 2 anak hasil crossover yang disimpan dalam array of Individu
+     */
+    public Individu[] piecesCrossover(Individu other) {
+
+        Individu anak1 = new Individu(this.rand);
+        Individu anak2 = new Individu(this.rand);
+
+        // potong kromosom jadi 4 pieces
+        ArrayList<int[][]> piecesA = this.cutBoardInto4Pieces();
+        ArrayList<int[][]> piecesB = other.cutBoardInto4Pieces();
+
+        int size = piecesA.size(); // harus 4
+        int cutPoint = rand.nextInt(size - 1) + 1; // bebas: 1..3
+
+        ArrayList<int[][]> childPieces1 = new ArrayList<>();
+        ArrayList<int[][]> childPieces2 = new ArrayList<>();
+
+        for (int i = 0; i < size; i++) {
+            if (i < cutPoint) {
+                childPieces1.add(copyPieces(piecesA.get(i)));
+                childPieces2.add(copyPieces(piecesB.get(i)));
+            } else {
+                childPieces1.add(copyPieces(piecesB.get(i)));
+                childPieces2.add(copyPieces(piecesA.get(i)));
+            }
+        }
+
+        // gabungkan kembali jadi kromosom utuh
+        anak1.kromosom = mergePieces(childPieces1);
+        anak2.kromosom = mergePieces(childPieces2);
+
+        return new Individu[]{anak1, anak2};
+    }
+
+    private int[][] copyPieces(int[][] piece) {
+        int[][] copy = new int[piece.length][piece[0].length];
+        for (int i = 0; i < piece.length; i++) {
+            for (int j = 0; j < piece[0].length; j++) {
+                copy[i][j] = piece[i][j];
+            }
+        }
+        return copy;
+    }
+
+    private int[][] mergePieces(ArrayList<int[][]> pieces) {
+        int[][] topLeft = pieces.get(0);
+        int[][] topRight = pieces.get(1);
+        int[][] bottomLeft = pieces.get(2);
+        int[][] bottomRight = pieces.get(3);
+
+        int pieceLength = topLeft.length;
+        int[][] newKromosom = new int[kromosom.length][kromosom.length];
+
+        paste(newKromosom, topLeft, 0, 0);
+        paste(newKromosom, topRight, 0, pieceLength);
+        paste(newKromosom, bottomLeft, pieceLength, 0);
+        paste(newKromosom, bottomRight, pieceLength, pieceLength);
+
+        return newKromosom;
+    }
+
+    private void paste(int[][] newKromosom, int[][] piece, int rowStart, int colStart) {
+        for (int i = 0; i < piece.length; i++) {
+            for (int j = 0; j < piece[0].length; j++) {
+                newKromosom[rowStart + i][colStart + j] = piece[i][j];
+            }
+        }
+    }
+
     /**
      * Melakukan mutasi untuk pada individu
      *
@@ -425,6 +542,6 @@ public class Individu implements Comparable<Individu> {
      */
     @Override
     public int compareTo(Individu other) {
-        return Double.compare(other.fitness, this.fitness);
+        return Double.compare(other.fitness, this.fitnegit ss);
     }
 }
