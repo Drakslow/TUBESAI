@@ -140,7 +140,7 @@ public class Individu implements Comparable<Individu> {
      *             3 = Uniform (Acak per Garis Miring)
      * @return Array 2 anak hasil crossover
      */
-    public Individu[] crossoverDiagonalVariations(Individu other, int type) {
+    public Individu[] crossoverDiagonalVariations(Individu other) {
         Individu anak1 = new Individu(this.rand);
         Individu anak2 = new Individu(this.rand);
 
@@ -164,30 +164,10 @@ public class Individu implements Comparable<Individu> {
         // menentukan index untuk one point, two point, dan array boolean untuk
         // menyimpan posisi anak 1 dan 2
         int cut1 = 0;
-        int cut2 = 0;
-        boolean[] uniformMap = null;
 
-        if (type == 1) {
-            // ONE POINT: Pilih satu garis potong diagonal secara acak
-            // range random diantara minDiag dan maxDiag
-            cut1 = rand.nextInt(totalDiagonals) + minDiag;
-        } else if (type == 2) {
-            // TWO POINT: Pilih dua garis potong
-            int r1 = 0;
-            int r2 = 0;
-            while (r1 == r2) {
-                r1 = rand.nextInt(totalDiagonals) + minDiag;
-                r2 = rand.nextInt(totalDiagonals) + minDiag;
-            }
-            cut1 = Math.min(r1, r2);
-            cut2 = Math.max(r1, r2);
-        } else if (type == 3) {
-            // UNIFORM: Setiap garis diagonal punya peluang 50% untuk ditukar
-            uniformMap = new boolean[totalDiagonals];
-            for (int i = 0; i < totalDiagonals; i++) {
-                uniformMap[i] = rand.nextBoolean();
-            }
-        }
+        // ONE POINT: Pilih satu garis potong diagonal secara acak
+        // range random diantara minDiag dan maxDiag
+        cut1 = rand.nextInt(totalDiagonals) + minDiag;
 
         // Proses looping crossover
         for (int y = 0; y < rows; y++) {
@@ -199,27 +179,10 @@ public class Individu implements Comparable<Individu> {
 
                 boolean swap = false;
 
-                // Tentukan apakah sel ini harus di-swap (tukar) berdasarkan tipe
-                switch (type) {
-                    case 1: // One Point
-                        // Jika diagonal sel lebih besar dari titik potong (Area Bawah)
-                        if (diagVal >= cut1)
-                            swap = true;
-                        break;
-
-                    case 2: // Two Point
-                        // Jika sel berada DI ANTARA dua garis potong (Di dalam Pita)
-                        if (diagVal >= cut1 && diagVal <= cut2)
-                            swap = true;
-                        break;
-
-                    case 3: // Uniform (Per Garis)
-                        // Konversi diagVal ke index array (0 sampai totalDiagonals-1)
-                        int mapIndex = diagVal - minDiag;
-                        if (uniformMap[mapIndex])
-                            swap = true;
-                        break;
-                }
+                // One Point
+                // Jika diagonal sel lebih besar dari titik potong (Area Bawah)
+                if (diagVal >= cut1)
+                    swap = true;
 
                 // proses crossover
                 if (swap) {
