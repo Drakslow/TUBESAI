@@ -103,11 +103,11 @@ public class ParentSelection {
     public static Individu[] tournamentSelection(Random rand, ArrayList<Individu> populasi) {
         Individu[] parents = new Individu[2];
 
-        // Pilih calon parent 10% dari populasi
-        int maxRound = populasi.size()/10;
+        // Pilih calon parent 5 dari populasi
+        int maxRound = 5;
 
         for (int parent = 0; parent < 2; parent++) {
-            //ambil calon parent sebanyak 10% populasi dan ambil individu dengan fitness terbesar
+            // ambil 5 individu acak dan pilih fitness terbaik
             for (int round = 0; round < maxRound; round++) {
                 Individu calonParent = populasi.get(rand.nextInt(populasi.size()));
 

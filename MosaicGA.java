@@ -41,7 +41,7 @@ public class MosaicGA {
      */
     private static double probMaxError;
 
-    static double generasiBestF[][] = new double[20][5000];
+    static double generasiBestF[][] = new double[20][3000];
     static double minimumFitness = Double.MAX_VALUE;
     static double waktuPerInput[] = new double[20];
     static double generasiPerInput[] = new double[20];
@@ -302,11 +302,11 @@ public class MosaicGA {
 //            double elitismRate = sc.nextDouble();// presentase individu terbaik akan disimpan ke generasi berikutnya
 //            double mutationRate = sc.nextDouble();//probabilitas gen pada kromosom mengalami mutasi
 
-            int maxGenerations = 5000;// maksimal generasi yang akan dimiliki oleh GA
-            int populasiSize = 500; // banyak individu dalam 1 populasi
+            int maxGenerations = 3000;// maksimal generasi yang akan dimiliki oleh GA
+            int populasiSize = 200; // banyak individu dalam 1 populasi
             double crossoverRate = 0.8;// probabilitas kemungkinan parents melakukan crossover
             double elitismRate = 0.1;// presentase individu terbaik akan disimpan ke generasi berikutnya
-            double mutationRate = 0.015;//probabilitas gen pada kromosom mengalami mutasi
+            double mutationRate = 0.01;//probabilitas gen pada kromosom mengalami mutasi
 
             //Melakukan preprocessing
             runHeuristics();
