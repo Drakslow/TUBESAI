@@ -141,7 +141,7 @@ public class Populasi {
 
             Individu[] children;
             if (rand.nextDouble() < crossoverRate) { //lakukan crossover
-                children = parents[0].crossover(parents[1]);
+                children = parents[0].crossoverUniformVariations(parents[1], 2);
             }
             else { //crossover gagal
                 //anaknya copy dari orang tua

@@ -38,7 +38,7 @@ public class MosaicGA {
     /**
      * list yang menyimpan koordinat kotak belum pasti
      */
-    private static ArrayList<Koordinat> daftarKotakTidakPasti;
+    protected static ArrayList<Koordinat> daftarKotakTidakPasti;
     
     /**
      * variable untuk menyimpan total kemungkinan maksimal eror yang dapat terjadi
@@ -280,7 +280,7 @@ public class MosaicGA {
      */
     public static void main(String[] args) throws FileNotFoundException {
         // File file = new File("Input/10x10Easy_3_283_336.txt");
-        File file = new File("Input/10x10Easy_3_283_336.txt");
+        File file = new File("Input/10x10/input1.txt");
 
         Scanner sc = new Scanner(file);
 

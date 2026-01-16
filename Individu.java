@@ -32,11 +32,11 @@ public class Individu implements Comparable<Individu> {
      */
     public Individu(Random rand) {
         this.rand = rand;
-        this.kromosom = new int[baris][kolom];
+        this.kromosom = new int[MosaicGA.baris][MosaicGA.kolom];
         this.fitness = 0.0; //inisialisasi fitness dari 0, karena yang diincar adalah 1.0 (semakin besar semakin baik, dengan range 0.0 - 1.0)
 
-        for (int y = 0; y < baris; y++) {
-            for (int x = 0; x < kolom; x++) {
+        for (int y = 0; y < MosaicGA.baris; y++) {
+            for (int x = 0; x < MosaicGA.kolom; x++) {
 
                 if (MosaicGA.fixedBoard[y][x] == -1) {
                     kromosom[y][x] = rand.nextBoolean() ? 1 : 0;
@@ -70,63 +70,121 @@ public class Individu implements Comparable<Individu> {
         }
     }
 
-    /**
-     * Melakukan crossover dengan 3 tipe, yaitu single-point, two-point, dan uniform crossover
+    // /**
+    //  * Melakukan crossover dengan 3 tipe, yaitu single-point, two-point, dan uniform crossover
+    //  *
+    //  * @param other objek Individu yang menyimpan informasi individu lain
+    //  * @return 2 anak hasil crossover yang disimpan dalam array of Individu
+    //  */
+    // public Individu[] crossover(Individu other) {
+    //     //buat 2 children baru
+    //     Individu anak1 = new Individu(this.rand);
+    //     Individu anak2 = new Individu(this.rand);
+
+    //     int size = this.kromosom.size();
+    //     int crossoverType = 3; //ubah tipe crossover di sini
+
+    //     // Untuk single dan two point
+    //     //0 sampai first
+    //     //(first+1) sampai second
+    //     int firstCutPoint = rand.nextInt(size - 1); // dari 0
+    //     int secondCutPoint = firstCutPoint + rand.nextInt(size - firstCutPoint); // sampai size-1
+
+    //     //pencegahan salah logic
+    //     if (firstCutPoint == secondCutPoint) {
+    //         secondCutPoint++;
+    //     }
+
+    //     if (crossoverType == 1) {
+    //         //dalam first point, secondCutPoint menjadi pembaginya
+    //         firstCutPoint = 0;
+    //     }
+
+    //     if (crossoverType < 3) { //yang bukan uniform
+    //         for (int i = 0; i < size; i++) {
+    //             //dibuat i < second cut karena dalam kasus one dan two point cut, jika second cut berada di size-1, size-1 bisa di crossover
+    //             //sehingga children tidak copy dari orang tua
+    //             if (i >= firstCutPoint && i < secondCutPoint) { //i < second karena menyisakan ujung untuk crossover
+    //                 anak1.kromosom.add(this.kromosom.get(i));
+    //                 anak2.kromosom.add(other.kromosom.get(i));
+    //             } else { //untuk yang di bawah first cut dan di atas atau sama dengan second cut
+    //                 anak1.kromosom.add(other.kromosom.get(i));
+    //                 anak2.kromosom.add(this.kromosom.get(i));
+    //             }
+    //         }
+    //     } else { //untuk uniform
+    //         for (int i = 0; i < size; i++) {
+    //             //setiap gen orang tua punya peluang 0.5 untuk ditempati di gen anak 1 atau 2
+    //             if (rand.nextDouble() < 0.5) {
+    //                 anak1.kromosom.add(this.kromosom.get(i));
+    //                 anak2.kromosom.add(other.kromosom.get(i));
+    //             } else {
+    //                 anak1.kromosom.add(other.kromosom.get(i));
+    //                 anak2.kromosom.add(this.kromosom.get(i));
+    //             }
+    //         }
+    //     }
+
+    //     return new Individu[]{anak1, anak2};
+    // }
+
+
+    /*
+     * Method untuk melakukan uniform crossover dengan variasi pada kotak tidak pasti saja
      *
-     * @param other objek Individu yang menyimpan informasi individu lain
+     * @param other adalah objek Individu yang menyimpan informasi individu (parent) lain
+     * @param type adalah tipe crossover, 1 = hanya pada kotak tidak pasti, 2 = pada semua kotak
+     * 
      * @return 2 anak hasil crossover yang disimpan dalam array of Individu
      */
-    public Individu[] crossover(Individu other) {
-        //buat 2 children baru
+    public Individu[] crossoverUniformVariations(Individu other, int type){ 
+        //inisialisasi anak1 dan anak2 terlebih dahulu 
         Individu anak1 = new Individu(this.rand);
         Individu anak2 = new Individu(this.rand);
 
-        int size = this.kromosom.size();
-        int crossoverType = 3; //ubah tipe crossover di sini
+        if(type == 1){ // jika tipe nya adalah 1, maka loop yang di cek hanya kotak tidak pasti saja
+            for (Koordinat k : MosaicGA.daftarKotakTidakPasti) {
+                //ambil baris (y) dan kolom (x) dari cell di kotak tidak pasti nya saja
+                int y = k.getY();
+                int x = k.getX();
 
-        // Untuk single dan two point
-        //0 sampai first
-        //(first+1) sampai second
-        int firstCutPoint = rand.nextInt(size - 1); // dari 0
-        int secondCutPoint = firstCutPoint + rand.nextInt(size - firstCutPoint); // sampai size-1
+                //inisialisasi rnd sebagai random yg akan dipakai saat pemilihan anak (rentang nilai 0.0 sampai 1.0)
+                double rnd = rand.nextDouble();
 
-        //pencegahan salah logic
-        if (firstCutPoint == secondCutPoint) {
-            secondCutPoint++;
-        }
-
-        if (crossoverType == 1) {
-            //dalam first point, secondCutPoint menjadi pembaginya
-            firstCutPoint = 0;
-        }
-
-        if (crossoverType < 3) { //yang bukan uniform
-            for (int i = 0; i < size; i++) {
-                //dibuat i < second cut karena dalam kasus one dan two point cut, jika second cut berada di size-1, size-1 bisa di crossover
-                //sehingga children tidak copy dari orang tua
-                if (i >= firstCutPoint && i < secondCutPoint) { //i < second karena menyisakan ujung untuk crossover
-                    anak1.kromosom.add(this.kromosom.get(i));
-                    anak2.kromosom.add(other.kromosom.get(i));
-                } else { //untuk yang di bawah first cut dan di atas atau sama dengan second cut
-                    anak1.kromosom.add(other.kromosom.get(i));
-                    anak2.kromosom.add(this.kromosom.get(i));
+                if (rnd < 0.5) { //jika rnd kurang dari 0.5, maka anak1 akan diisi oleh kotak parent1 (this), dan anak2 diisi oleh kotak parent2 (other)                    
+                    anak1.kromosom[y][x] = this.kromosom[y][x];
+                    anak2.kromosom[y][x] = other.kromosom[y][x];
+                } else {//jika rnd lebih besar sama dengan  0.5 (>=0.5), maka anak1 akan diisi oleh kotak parent2 (other), dan anak2 diisi oleh kotak parent1 (this)
+                    anak1.kromosom[y][x] = other.kromosom[y][x];
+                    anak2.kromosom[y][x] = this.kromosom[y][x];
                 }
             }
-        } else { //untuk uniform
-            for (int i = 0; i < size; i++) {
-                //setiap gen orang tua punya peluang 0.5 untuk ditempati di gen anak 1 atau 2
-                if (rand.nextDouble() < 0.5) {
-                    anak1.kromosom.add(this.kromosom.get(i));
-                    anak2.kromosom.add(other.kromosom.get(i));
-                } else {
-                    anak1.kromosom.add(other.kromosom.get(i));
-                    anak2.kromosom.add(this.kromosom.get(i));
+            return new Individu[]{anak1, anak2};//return anak1 dan anak2 
+        } else{
+            //ambil nilai kolom dan baris yg dimiliki oleh mosaic puzzle
+            int rows = MosaicGA.baris;
+            int cols = MosaicGA.kolom;
+
+            //loop setiap kotak di mosaic puzzle
+            for(int y = 0; y < rows; y++){
+                for(int x = 0; x < cols; x++){
+                    //inisialisasi rnd sebagai random yg akan dipakai saat pemilihan anak (rentang nilai 0.0 sampai 1.0)
+                    double rnd = rand.nextDouble();
+
+                    if (rnd < 0.5) { //jika rnd kurang dari 0.5, maka anak1 akan diisi oleh kotak parent1 (this), dan anak2 diisi oleh kotak parent2 (other)                    
+                        anak1.kromosom[y][x] = this.kromosom[y][x];
+                        anak2.kromosom[y][x] = other.kromosom[y][x];
+                    } else {//jika rnd lebih besar sama dengan  0.5 (>=0.5), maka anak1 akan diisi oleh kotak parent2 (other), dan anak2 diisi oleh kotak parent1 (this)
+                        anak1.kromosom[y][x] = other.kromosom[y][x];
+                        anak2.kromosom[y][x] = this.kromosom[y][x];
+                    }
                 }
             }
+            return new Individu[]{anak1, anak2};
         }
-
-        return new Individu[]{anak1, anak2};
     }
+
+
 
     /**
      * Melakukan mutasi untuk pada individu
