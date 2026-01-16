@@ -96,8 +96,15 @@ public class MosaicAlgoGA {
             currentPop = currentPop.getNewPopulasiWElit();
             currentPop.calcAllFitnesses();
 
+            //Eksperimen
+            MosaicGA.generasiBestF[MosaicGA.counterInput][generation]=currentPop.getBestIdv().getFitness();
+
+
             generation++;
         }
+
+        //EKsperimen
+        MosaicGA.generasiPerInput[MosaicGA.counterInput]=generation;
 
         return globalBest;
     }

@@ -18,7 +18,7 @@ public class MosaicGA {
     /**
      * random yang akan menjadi parameter constructor di beberapa kelas
      */
-    private static final Random rnd = new Random(seed);
+    private static Random rnd = new Random(seed);
 
     /**
      * ukuran baris dan kolom pada board
@@ -40,6 +40,13 @@ public class MosaicGA {
      * variable untuk menyimpan total kemungkinan maksimal eror yang dapat terjadi
      */
     private static double probMaxError;
+
+    static double generasiBestF[][] = new double[20][10001];
+    static double minimumFitness = Double.MAX_VALUE;
+    static double waktuPerInput[] = new double[20];
+    static double generasiPerInput[] = new double[20];
+    static double bestFPerInput[] = new double[20];
+    static int counterInput = 0;
 
     /**
      * logika heuristik awal untuk mengisi fixedBoard dan daftarKotakTidakPasti dengan menerapkan trik bermain
@@ -266,8 +273,13 @@ public class MosaicGA {
      * @throws FileNotFoundException throw file input yang tidak ditemukan
      */
     public static void main(String[] args) throws FileNotFoundException {
-            File file = new File("./Input/10x10/input11.txt");
+        for (int input = 1; input < 21 ; input++) {
+            PrintStream out = new PrintStream(new File(String.format("./Input/10x10/OutputTest%d.txt",input)));
+            System.setOut(out);
+            rnd = new Random(seed);
+            File file = new File(String.format("./Input/10x10/input%d.txt",input));
             Scanner sc = new Scanner(file);
+
             baris = sc.nextInt();
             kolom = sc.nextInt();
             map = new int[baris][kolom];
@@ -275,12 +287,14 @@ public class MosaicGA {
             for (int y = 0; y < baris; y++) {
                 Arrays.fill(fixedBoard[y], -1);
             }
+            
 
             for (int i = 0; i < baris; i++) {
                 for (int j = 0; j < kolom; j++) {
                     map[i][j] = sc.nextInt();
                 }
             }
+
             //parameter (baca dari file juga)
 //            int maxGenerations = sc.nextInt();// maksimal generasi yang akan dimiliki oleh GA
 //            int populasiSize = sc.nextInt(); // banyak individu dalam 1 populasi
@@ -307,21 +321,118 @@ public class MosaicGA {
             long akhir = System.currentTimeMillis();
 
             //Simpan Eksperimen
+            waktuPerInput[input-1]=(akhir-mulai)/1000.0;
+            bestFPerInput[input-1]=bestSolution.getFitness();
+            minimumFitness=Math.min(minimumFitness,bestSolution.getFitness());
             System.out.println("\n=== Parameters ===");
-            System.out.println("MaxGeneration : " + maxGenerations);
-            System.out.println("PopulasiSize : " + populasiSize);
-            System.out.println("CrossoverRate : " + crossoverRate);
-            System.out.println("ElitismRate : " + elitismRate);
-            System.out.println("MutationRate : " + mutationRate);
-            System.out.println("Seed : " + seed);
+            System.out.println("MaxGeneration : "+maxGenerations);
+            System.out.println("PopulasiSize : "+populasiSize);
+            System.out.println("CrossoverRate : "+crossoverRate);
+            System.out.println("ElitismRate : "+elitismRate);
+            System.out.println("MutationRate : "+mutationRate);
+            System.out.println("Seed : "+seed);
             System.out.println("\n=== Waktu Selesai ===");
-            System.out.println("Time : " + (akhir - mulai) / 1000.0 + "(s)");
+            System.out.println("Time : "+(akhir-mulai)/1000.0+"(s)");
             System.out.println("\n=== Best Solution Found ===");
             System.out.printf("Final Fitness: %.5f\n", bestSolution.getFitness());
 
             printBestSolution(bestSolution.kromosom);
 
+            counterInput++;
+        }
+        printRataRataEksperimen();
+    }
+    static class BestFEntry {
+        int inputIndex;   // indeks asli (0-based)
+        double value;
 
+        BestFEntry(int inputIndex, double value) {
+            this.inputIndex = inputIndex;
+            this.value = value;
+        }
+    }
+
+    private static void printRataRataEksperimen() throws FileNotFoundException {
+        PrintStream out = new PrintStream(
+                new File("./Input/10x10/EksperimenRata_Rata.txt")
+        );
+        System.setOut(out);
+
+        System.out.println("========================================");
+        System.out.println("        HASIL RATA-RATA EKSPERIMEN       ");
+        System.out.println("========================================\n");
+
+        // ================= HARMONIC MEAN =================
+        System.out.println("==== Harmonic Mean Waktu Per Input ====");
+        System.out.println(harmonicMean(waktuPerInput));
+        System.out.println();
+
+        System.out.println("==== Harmonic Mean Generasi Per Input ====");
+        System.out.println(harmonicMean(generasiPerInput));
+        System.out.println();
+
+        System.out.println("==== Harmonic Mean Best Fitness Per Input ====");
+        System.out.println(harmonicMean(bestFPerInput));
+        System.out.println();
+        System.out.println("Best F per Input (Ranking):");
+
+// ubah array jadi list of pair
+        List<BestFEntry> list = new ArrayList<>();
+        for (int i = 0; i < 20; i++) {
+            list.add(new BestFEntry(i, bestFPerInput[i]));
+        }
+
+        list.sort((a, b) -> Double.compare(b.value, a.value));
+
+        for (int rank = 0; rank < list.size(); rank++) {
+            BestFEntry e = list.get(rank);
+            System.out.printf(
+                    "%2d. Input %2d (index %2d) = %.5f%n",
+                    rank + 1,
+                    e.inputIndex + 1,   // input 1-based
+                    e.inputIndex,       // indeks asli
+                    e.value
+            );
+        }
+
+
+        System.out.println("==== Harmonic Mean Generasi Best Fitness ====");
+        harmonicMean2D(generasiBestF);
+        System.out.println();
+
+        out.close();
+    }
+
+    private static void harmonicMean2D(double[][] data) {
+        int jumlahInput = data.length;        // 20
+        int jumlahGenerasi = data[0].length;  // 5001
+
+        for (int gen = 0; gen < jumlahGenerasi; gen++) {
+            double sumPenyebut = 0.0;
+
+            for (int input = 0; input < jumlahInput; input++) {
+                sumPenyebut += 1.0 / data[input][gen];
+            }
+
+            double hm = jumlahInput / sumPenyebut;
+
+            System.out.printf("Generasi %4d : %.6f\n", gen, hm);
+        }
+    }
+
+
+
+
+
+    private static double harmonicMean(double[] data) {
+        double sumPenyebut = 0.0;
+        int n = data.length;
+
+        for (double x : data) {
+            sumPenyebut += 1.0 / x;
+        }
+
+        return n / sumPenyebut;
     }
 
     /**

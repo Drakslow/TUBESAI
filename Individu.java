@@ -174,7 +174,7 @@ public class Individu implements Comparable<Individu> {
             case 7:
                 return crossoverDiagonalVariations(other);
             default:
-                return crossoverUniform(other); // Default ke Uniform Diagonal
+                return crossoverUniform(other);
         }
     }
 
@@ -299,8 +299,8 @@ public class Individu implements Comparable<Individu> {
         // Fill kromosom
         for (int y = 0; y < MosaicGA.baris; y++) {
             for (int x = 0; x < MosaicGA.kolom; x++) {
-                if (MosaicGA.fixedBoard[y][x] != -1)
-                    continue;
+//                if (MosaicGA.fixedBoard[y][x] != -1)
+//                    continue;
 
                 boolean isCrossPoint = false;
 
