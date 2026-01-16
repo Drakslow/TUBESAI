@@ -156,7 +156,7 @@ public class Individu implements Comparable<Individu> {
      * @return 2 anak hasil crossover yang disimpan dalam array of Individu
      */
     public Individu[] crossover(Individu other) {
-        int crossoverType = 7; // Ubah tipe crossover di sini (1-10)
+        int crossoverType = 5; // Ubah tipe crossover di sini (1-10)
 
         switch (crossoverType) {
             case 1:
@@ -172,15 +172,9 @@ public class Individu implements Comparable<Individu> {
             case 6:
                 return piecesCrossover(other);
             case 7:
-                return crossoverUniform(other);
-            case 8:
-                return crossoverDiagonalVariations(other, 1); // One-Point Diagonal
-            case 9:
-                return crossoverDiagonalVariations(other, 2); // Two-Point Diagonal
-            case 10:
-                return crossoverDiagonalVariations(other, 3); // Uniform Diagonal
+                return crossoverDiagonalVariations(other);
             default:
-                return crossoverDiagonalVariations(other, 3); // Default ke Uniform Diagonal
+                return crossoverUniform(other); // Default ke Uniform Diagonal
         }
     }
 

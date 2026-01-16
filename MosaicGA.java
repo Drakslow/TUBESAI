@@ -266,7 +266,7 @@ public class MosaicGA {
      * @throws FileNotFoundException throw file input yang tidak ditemukan
      */
     public static void main(String[] args) throws FileNotFoundException {
-            File file = new File("./Input/10x10/input13.txt");
+            File file = new File("./Input/10x10/input11.txt");
             Scanner sc = new Scanner(file);
             baris = sc.nextInt();
             kolom = sc.nextInt();
@@ -346,10 +346,9 @@ public class MosaicGA {
     }
 
     /**
-     * Print board solusi.
-     * Menggabunglan daftar kotak tidak pasti (kromosom) dengan final board
+     * Print board solusi best terakhir
      *
-     * @param finalBoard menyimpan daftar kotak yang tidak pasti
+     * @param finalBoard menyimpan daftar kotak yang final
      */
     private static void printBestSolution(int[][] finalBoard) {
         for (int y = 0; y < baris; y++) {
