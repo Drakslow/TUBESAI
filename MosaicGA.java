@@ -45,39 +45,25 @@ public class MosaicGA {
      * logika heuristik awal untuk mengisi fixedBoard dan daftarKotakTidakPasti dengan menerapkan trik bermain
      */
     private static void runHeuristics() { //method untuk menerapkan aturan trik permainan
-        //TODO: kenapa harus pakai while? cukup sekali loop tidak bisa?
-
-        boolean berubah = true;// flag untuk mengecek apakah ada perubahan pada iterasi terakhir
-        while(berubah) { //loop sampai tidak ada perubahan lagi
-            berubah = false;
-
-            //loop setiap kotak di papan, dan jika ada menyinggung aturan permainan, maka tetangga2nya di set sesuai aturan
-            for (int y = 0; y < baris; y++) {
-                for (int x = 0; x < kolom; x++) {
-                    //ambil nilai kotak saat ini
-                    int valueKotak = map[y][x];
-                    if (valueKotak == -1) {//jika kotak ber angka -1 lanjut aja
-                        continue;
-                    }else if (valueKotak == 0) {//jika kotak ber angka 0, maka semua tetangga dan diriny sendiri putih (0)
-                        if (setNeighbors(x, y, 0)) {
-                            berubah = true;
-                        }
-                    }
-                    else if (valueKotak == 9) {//jika kotak ber angka 9, maka semua tetangga dan diriny sendiri hitam (1)
-                        if (setNeighbors(x, y, 1)) {
-                            berubah = true;
-                        }
-                    }
-                    else if (valueKotak == 4 && isCorner(x, y)) {//jika kotak ber angka 4 dan di sudut, maka semua tetangga dan diriny sendiri hitam (1)
-                        if (setNeighbors(x, y, 1)) {
-                            berubah = true;
-                        }
-                    }
-                    else if (valueKotak == 6 && isEdge(x, y)) {//jika kotak ber angka 6 dan di bagian sisi, maka semua tetangga dan diriny sendiri hitam (1)
-                        if (setNeighbors(x, y, 1)) {
-                            berubah = true;
-                        }
-                    }
+ 
+        //loop setiap kotak di papan, dan jika ada menyinggung aturan permainan, maka tetangga2nya di set sesuai aturan
+        for (int y = 0; y < baris; y++) {
+            for (int x = 0; x < kolom; x++) {
+                //ambil nilai kotak saat ini
+                int valueKotak = map[y][x];
+                if (valueKotak == -1) {//jika kotak ber angka -1 lanjut aja
+                    continue;
+                }else if (valueKotak == 0) {//jika kotak ber angka 0, maka semua tetangga dan diriny sendiri putih (0)
+                    setNeighbors(x, y, 0);
+                }
+                else if (valueKotak == 9) {//jika kotak ber angka 9, maka semua tetangga dan diriny sendiri hitam (1)
+                    setNeighbors(x, y, 1);
+                }
+                else if (valueKotak == 4 && isCorner(x, y)) {//jika kotak ber angka 4 dan di sudut, maka semua tetangga dan diriny sendiri hitam (1)
+                    setNeighbors(x, y, 1);
+                }
+                else if (valueKotak == 6 && isEdge(x, y)) {//jika kotak ber angka 6 dan di bagian sisi, maka semua tetangga dan diriny sendiri hitam (1)
+                    setNeighbors(x, y, 1);
                 }
             }
         }
@@ -94,23 +80,22 @@ public class MosaicGA {
     /**
      * Memeriksa apakah sebuah kotak merupakan kotak yang sudah pasti atau bukan
      *
-     * @param cx center x, koordinat x sebuah kotak
-     * @param cy center y, koordinat y sebuah kotak
+     * @param posisiX center x, koordinat x sebuah kotak
+     * @param posisiY center y, koordinat y sebuah kotak
      * @return ada clue di tetangga: True, tidak ada clue di tetangga: False
      */
-    //TODO: kotak sendiri kenapa diperiksa juga?
-    private static boolean disekitarClue(int cx, int cy) {
+    private static boolean disekitarClue(int posisiX, int posisiY) {
         // Loop radius 3x3
-        for (int dy = -1; dy <= 1; dy++) {
-            for (int dx = -1; dx <= 1; dx++) {
-                int nx = cx + dx;
-                int ny = cy + dy;
+        for (int cekY = -1; cekY <= 1; cekY++) {
+            for (int cekX = -1; cekX <= 1; cekX++) {
+                int nilaiX = posisiX + cekX;
+                int nilaiY = posisiY + cekY;
 
                 // Cek batas array agar tidak error
-                if (nx >= 0 && nx < kolom && ny >= 0 && ny < baris) {
+                if (nilaiX >= 0 && nilaiX < kolom && nilaiY >= 0 && nilaiY < baris) {
                     // Jika tetangganya adalah ANGKA (bukan -1/kosong),
                     // brarti cell ini kemasuk g pasti
-                    if (map[ny][nx] != -1) {
+                    if (map[nilaiY][nilaiX] != -1) {
                         return true;
                     }
                 }
