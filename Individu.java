@@ -81,8 +81,8 @@ public class Individu implements Comparable<Individu> {
      */
     public Individu[] crossoverUniform(Individu other){
         //inisialisasi anak1 dan anak2 terlebih dahulu
-        Individu anak1 = new Individu(this.rand);
-        Individu anak2 = new Individu(this.rand);
+        Individu anak1 = new Individu(this);
+        Individu anak2 = new Individu(other);
 
         //melakukan loop (pengecekan) pada setiap kotak di mosaic puzzle
         for(int y = 0; y < MosaicGA.baris; y++){
@@ -186,8 +186,8 @@ public class Individu implements Comparable<Individu> {
      * @return 2 anak hasil crossover
      */
     public Individu[] crossoverBlock(Individu other) {
-        Individu anak1 = new Individu(this.rand);
-        Individu anak2 = new Individu(this.rand);
+        Individu anak1 = new Individu(this);
+        Individu anak2 = new Individu(other);
 
         int y1 = rand.nextInt(MosaicGA.baris);
         int y2 = y1 + rand.nextInt(MosaicGA.baris - y1);
@@ -220,8 +220,8 @@ public class Individu implements Comparable<Individu> {
      * @return 2 anak hasil crossover
      */
     private Individu[] crossoverVertical(Individu other) {
-        Individu anak1 = new Individu(this.rand);
-        Individu anak2 = new Individu(this.rand);
+        Individu anak1 = new Individu(this);
+        Individu anak2 = new Individu(other);
 
         int lokasiCut = rand.nextInt(MosaicGA.kolom);
 
@@ -248,8 +248,8 @@ public class Individu implements Comparable<Individu> {
      * @return 2 anak hasil crossover
      */
     private Individu[] crossoverStripe(Individu other) {
-        Individu anak1 = new Individu(this.rand);
-        Individu anak2 = new Individu(this.rand);
+        Individu anak1 = new Individu(this);
+        Individu anak2 = new Individu(other);
 
         // Lebar stripe (bisa random 1-2)
         int lebarGaris = rand.nextInt(2) + 1;
@@ -282,8 +282,8 @@ public class Individu implements Comparable<Individu> {
      * @return 2 anak hasil crossover
      */
     private Individu[] crossoverMultiCross(Individu other) {
-        Individu anak1 = new Individu(this.rand);
-        Individu anak2 = new Individu(this.rand);
+        Individu anak1 = new Individu(this);
+        Individu anak2 = new Individu(other);
 
         // Jumlah cross dinamis berdasarkan ukuran board
         int minCrosses = 7 + (MosaicGA.baris / 5);
@@ -336,8 +336,8 @@ public class Individu implements Comparable<Individu> {
     }
 
     private Individu[] crossoverHorizontal(Individu other) {
-        Individu anak1 = new Individu(this.rand);
-        Individu anak2 = new Individu(this.rand);
+        Individu anak1 = new Individu(this);
+        Individu anak2 = new Individu(other);
 
         int lokasiCut = rand.nextInt(MosaicGA.baris);
 
@@ -365,8 +365,8 @@ public class Individu implements Comparable<Individu> {
      * @return Array 2 anak hasil crossover
      */
     public Individu[] crossoverDiagonalVariations(Individu other) {
-        Individu anak1 = new Individu(this.rand);
-        Individu anak2 = new Individu(this.rand);
+        Individu anak1 = new Individu(this);
+        Individu anak2 = new Individu(other);
 
         int rows = MosaicGA.baris;
         int cols = MosaicGA.kolom;
@@ -433,8 +433,8 @@ public class Individu implements Comparable<Individu> {
      */
     public Individu[] piecesCrossover(Individu other) {
 
-        Individu anak1 = new Individu(this.rand);
-        Individu anak2 = new Individu(this.rand);
+        Individu anak1 = new Individu(this);
+        Individu anak2 = new Individu(other);
 
         // potong kromosom jadi 4 pieces
         ArrayList<int[][]> piecesA = this.cutBoardInto4Pieces();
