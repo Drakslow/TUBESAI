@@ -1,6 +1,8 @@
 import java.io.*;
 import java.util.*;
 
+// NOTE: Hasil output ada di file OutputTest<urutan input>.txt
+
 /**
  * Main Class.
  * Input board dan parameter untuk genetic algorithm.
@@ -8,6 +10,7 @@ import java.util.*;
  *
  * @author Owen Lianggara
  * @author Andrew Kevin Alexander
+ * @author Kenneth Nathanael
  */
 public class MosaicGA {
     /**
@@ -41,11 +44,34 @@ public class MosaicGA {
      */
     private static double probMaxError;
 
+    /**
+     * menyimpan best fitness untuk tiap generasi pada setiap input
+     */
     static double generasiBestF[][] = new double[20][5000];
+
+    /**
+     * simpan minimum fitness, di mana fitness terkecil adalah fitness terburuk
+     */
     static double minimumFitness = Double.MAX_VALUE;
+
+    /**
+     * menyimpan durasi running setiap input (file input mulai dari 1 sampai 20)
+     */
     static double waktuPerInput[] = new double[20];
+
+    /**
+     * menyimpan jumlah generasi untuk setiap input
+     */
     static double generasiPerInput[] = new double[20];
+
+    /**
+     * menyimpan best fitness untuk setiap input
+     */
     static double bestFPerInput[] = new double[20];
+
+    /**
+     * menyimpan informasi urutan input
+     */
     static int counterInput = 0;
 
     /**
@@ -327,10 +353,29 @@ public class MosaicGA {
         }
         printRataRataEksperimen();
     }
+
+    /**
+     * Menyimpan ranking untuk mengurutkan fitness terbaik file input dari paling baik ke paling buruk
+     *
+     * @author Kenneth Nathanael
+     */
     static class BestFEntry {
+        /**
+         * urutan file input
+         */
         int inputIndex;   // indeks asli (0-based)
+
+        /**
+         * fitness terbaik pada input tersebut
+         */
         double value;
 
+        /**
+         * Construct urutan input baru
+         *
+         * @param inputIndex
+         * @param value
+         */
         BestFEntry(int inputIndex, double value) {
             this.inputIndex = inputIndex;
             this.value = value;
@@ -343,29 +388,21 @@ public class MosaicGA {
         );
         System.setOut(out);
 
-        System.out.println("========================================");
-        System.out.println("        HASIL RATA-RATA EKSPERIMEN       ");
-        System.out.println("========================================\n");
-
         // ================= HARMONIC MEAN =================
-        System.out.println("==== Harmonic Mean Waktu Per Input ====");
-        System.out.println(harmonicMean(waktuPerInput));
-        System.out.println();
-
-        System.out.println("==== Harmonic Mean Generasi Per Input ====");
+        System.out.println("==== Harmonic Mean Generasi Keseluruhan ====");
         System.out.println(harmonicMean(generasiPerInput));
         System.out.println();
 
         System.out.println();
         System.out.println("==== Min Generation per Input (Ranking) ====");
 
-// ubah array jadi list of pair
+        // ubah array jadi list of pair
         List<BestFEntry> genList = new ArrayList<>();
         for (int i = 0; i < 20; i++) {
             genList.add(new BestFEntry(i, generasiPerInput[i]));
         }
 
-// sort ASCENDING (paling kecil = paling cepat)
+        // sort menaik (paling kecil = paling cepat)
         genList.sort((a, b) -> Double.compare(a.value, b.value));
 
         for (int rank = 0; rank < genList.size(); rank++) {
@@ -373,8 +410,8 @@ public class MosaicGA {
             System.out.printf(
                     "%2d. Input %2d (index %2d) = %.0f generasi%n",
                     rank + 1,
-                    e.inputIndex + 1,   // input 1-based
-                    e.inputIndex,       // indeks asli
+                    e.inputIndex + 1, // nomor input
+                    e.inputIndex, // urutan input
                     e.value
             );
         }
@@ -385,7 +422,7 @@ public class MosaicGA {
         System.out.println();
         System.out.println("Best F per Input (Ranking):");
 
-// ubah array jadi list of pair
+        // ubah array jadi list of pair
         List<BestFEntry> list = new ArrayList<>();
         for (int i = 0; i < 20; i++) {
             list.add(new BestFEntry(i, bestFPerInput[i]));
@@ -413,8 +450,8 @@ public class MosaicGA {
     }
 
     private static void harmonicMean2D(double[][] data) {
-        int jumlahInput = data.length;        // 20
-        int jumlahGenerasi = data[0].length;  // 5001
+        int jumlahInput = data.length;
+        int jumlahGenerasi = data[0].length;
 
         for (int gen = 0; gen < jumlahGenerasi; gen++) {
             double sumPenyebut = 0.0;
@@ -428,10 +465,6 @@ public class MosaicGA {
             System.out.printf("Generasi %4d : %.6f\n", gen+1, hm);
         }
     }
-
-
-
-
 
     private static double harmonicMean(double[] data) {
         double sumPenyebut = 0.0;

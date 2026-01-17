@@ -72,11 +72,10 @@ public class Individu implements Comparable<Individu> {
         }
     }
 
-    /*
+    /**
      * Method untuk melakukan uniform crossover dengan variasi pada kotak tidak pasti saja (kotak bernilai -1)
      *
      * @param other adalah objek Individu yang menyimpan informasi individu (parent) lain
-     *
      * @return 2 anak hasil crossover yang disimpan dalam array of Individu
      */
     public Individu[] crossoverUniform(Individu other){
@@ -106,10 +105,45 @@ public class Individu implements Comparable<Individu> {
         return new Individu[]{anak1, anak2};//return anak1 dan anak2
     }
 
-
+    /**
+     * Membagi board menjadi 4 bagian sama besar m x m
+     *
+     * @return Array list yang menyimpan potongan 4 bagian board, kiri atas, kanan atas, kiri bawa, kanan bawah
+     */
     public ArrayList<int[][]> cutBoardInto4Pieces() {
         int kromosomSize = kromosom.length;
         int mid = (kromosomSize + 1) / 2; // untuk ganjil dan genap
+        // di mana dalam kasus board dengan ukuran ganjil akan memiliki ukuran potongan (n+1)/2
+        // Board ukuran ganjil memiliki kolom dan baris tengah yang akan disalin di sisi setiap potongan
+        /*
+            Contoh:
+
+            1 1 1 0 0
+            1 1 2 0 0
+            1 2 3 0 0
+            1 1 2 0 0
+            1 1 1 0 0
+
+            Kiri atas
+            1 1 1
+            1 1 2
+            1 2 3
+
+            Kanan atas
+            1 0 0
+            2 0 0
+            3 0 0
+
+            Kiri bawah
+            1 2 3
+            1 1 2
+            1 1 1
+
+            Kanan bawah
+            3 0 0
+            2 0 0
+            1 0 0
+         */
 
         ArrayList<int[][]> result = new ArrayList<>();
 
@@ -128,6 +162,14 @@ public class Individu implements Comparable<Individu> {
         return result;
     }
 
+    /**
+     * Menyalin bagian dari board untuk disimpan menjadi 4 bagian
+     *
+     * @param rowStart baris mulai
+     * @param colStart kolom mulai
+     * @param size ukuran potongan
+     * @return array integer untuk menyimpan potongan board
+     */
     private int[][] copyPiece(int rowStart, int colStart, int size) {
         int[][] piece = new int[size][size];
 
@@ -215,6 +257,7 @@ public class Individu implements Comparable<Individu> {
 
     /**
      * Crossover Vertical - Memotong secara vertikal
+     * Crossover dengan menggabungkan baris dari 2 parent
      *
      * @param other pasangan crossover
      * @return 2 anak hasil crossover
@@ -280,7 +323,7 @@ public class Individu implements Comparable<Individu> {
      * Jumlah cross point: minimal 7 + (baris / 5)
      *
      * @param other pasangan crossover
-     * @return 2 anak hasil crossover
+     * @return Array 2 anak hasil crossover
      */
     private Individu[] crossoverMultiCross(Individu other) {
         Individu anak1 = new Individu(this);
@@ -336,6 +379,13 @@ public class Individu implements Comparable<Individu> {
         return new Individu[] { anak1, anak2 };
     }
 
+    /**
+     * Crossover Horizontal - Memotong secara horizontal
+     * Crossover dengan menggabungkan kolom dari 2 parent
+     *
+     * @param other pasangan crossover
+     * @return Array 2 anak hasil crossover
+     */
     private Individu[] crossoverHorizontal(Individu other) {
         Individu anak1 = new Individu(this);
         Individu anak2 = new Individu(other);
@@ -360,9 +410,8 @@ public class Individu implements Comparable<Individu> {
 
     /**
      * Melakukan Crossover Diagonal dengan Variasi.
-     * * @param other Pasangan (Induk B)
-     * 
-     * 
+     *
+     * @param other Pasangan (Induk B)
      * @return Array 2 anak hasil crossover
      */
     public Individu[] crossoverDiagonalVariations(Individu other) {
@@ -441,8 +490,8 @@ public class Individu implements Comparable<Individu> {
         ArrayList<int[][]> piecesA = this.cutBoardInto4Pieces();
         ArrayList<int[][]> piecesB = other.cutBoardInto4Pieces();
 
-        int size = piecesA.size(); // harus 4
-        int cutPoint = rand.nextInt(size - 1) + 1; // bebas: 1..3
+        int size = piecesA.size(); // pasti 4 bagian
+        int cutPoint = rand.nextInt(size - 1) + 1; // cut point antara 1 sampai 3
 
         ArrayList<int[][]> childPieces1 = new ArrayList<>();
         ArrayList<int[][]> childPieces2 = new ArrayList<>();
@@ -457,7 +506,7 @@ public class Individu implements Comparable<Individu> {
             }
         }
 
-        // gabungkan kembali jadi kromosom utuh
+        // merge jadi kromosom
         anak1.kromosom = mergePieces(childPieces1);
         anak2.kromosom = mergePieces(childPieces2);
 
@@ -473,6 +522,12 @@ public class Individu implements Comparable<Individu> {
         return new Individu[] { anak1, anak2 };
     }
 
+    /**
+     * copy piece untuk menghindari reference object
+     *
+     * @param piece salah 1 dari 4 potongan board
+     * @return copy dari potongan asli
+     */
     private int[][] copyPieces(int[][] piece) {
         int[][] copy = new int[piece.length][piece[0].length];
         for (int i = 0; i < piece.length; i++) {
@@ -483,15 +538,23 @@ public class Individu implements Comparable<Individu> {
         return copy;
     }
 
+    /**
+     * Menggabungkan 4 potongan menjadi 1 kromosom
+     *
+     * @param pieces Array list yang menyimpan 4 potongan board
+     * @return kromosom dalam bentuk array 2 dimensi
+     */
     private int[][] mergePieces(ArrayList<int[][]> pieces) {
         int[][] topLeft = pieces.get(0);
         int[][] topRight = pieces.get(1);
         int[][] bottomLeft = pieces.get(2);
         int[][] bottomRight = pieces.get(3);
 
+        // mengatasi kolom dan baris tengah pada ukuran board ganjil
         int pieceLength = (kromosom.length%2 == 0)? topLeft.length : topLeft.length-1;
         int[][] newKromosom = new int[kromosom.length][kromosom.length];
 
+        // proses merge
         paste(newKromosom, topLeft, 0, 0);
         paste(newKromosom, topRight, 0, pieceLength);
         paste(newKromosom, bottomLeft, pieceLength, 0);
@@ -500,6 +563,14 @@ public class Individu implements Comparable<Individu> {
         return newKromosom;
     }
 
+    /**
+     * Salin potongan ke dalam board kromosom
+     *
+     * @param newKromosom kromosom baru yang ingin digabungkan potongannya
+     * @param piece potongan yang akan digabung
+     * @param rowStart baris mulai potongan ditempel
+     * @param colStart kolom mulai potongan ditempel
+     */
     private void paste(int[][] newKromosom, int[][] piece, int rowStart, int colStart) {
         for (int i = 0; i < piece.length; i++) {
             for (int j = 0; j < piece[0].length; j++) {
