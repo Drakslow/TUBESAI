@@ -156,7 +156,7 @@ public class Individu implements Comparable<Individu> {
      * @return 2 anak hasil crossover yang disimpan dalam array of Individu
      */
     public Individu[] crossover(Individu other) {
-        int crossoverType = 5; // Ubah tipe crossover di sini (1-10)
+        int crossoverType = 6; // Ubah tipe crossover di sini (1-10)
 
         switch (crossoverType) {
             case 1:
@@ -489,7 +489,7 @@ public class Individu implements Comparable<Individu> {
         int[][] bottomLeft = pieces.get(2);
         int[][] bottomRight = pieces.get(3);
 
-        int pieceLength = topLeft.length;
+        int pieceLength = (kromosom.length%2 == 0)? topLeft.length : topLeft.length-1;
         int[][] newKromosom = new int[kromosom.length][kromosom.length];
 
         paste(newKromosom, topLeft, 0, 0);
