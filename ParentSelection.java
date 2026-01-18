@@ -99,6 +99,9 @@ public class ParentSelection {
      * @param rand objek random dengan seed
      * @param populasi menyimpan Individu di ArrayList
      * @return parents, yaitu array of 2 Individu
+     *
+     * @see <a>https://www.baeldung.com/cs/ga-tournament-selection</a>
+     * @see <a>https://stackoverflow.com/questions/31933784/tournament-selection-in-genetic-algorithm</a>
      */
     public static Individu[] tournamentSelection(Random rand, ArrayList<Individu> populasi) {
         Individu[] parents = new Individu[2];
