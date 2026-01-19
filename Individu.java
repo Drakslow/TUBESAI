@@ -198,7 +198,7 @@ public class Individu implements Comparable<Individu> {
      * @return 2 anak hasil crossover yang disimpan dalam array of Individu
      */
     public Individu[] crossover(Individu other) {
-        int crossoverType = 6; // Ubah tipe crossover di sini (1-10)
+        int crossoverType = 5; // Ubah tipe crossover di sini (1-10)
 
         switch (crossoverType) {
             case 1:

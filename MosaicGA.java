@@ -285,10 +285,10 @@ public class MosaicGA {
      */
     public static void main(String[] args) throws FileNotFoundException {
         for (int input = 1; input < 21 ; input++) {
-            PrintStream out = new PrintStream(new File(String.format("./Input/20x20/OutputTest%d.txt",input)));
+            PrintStream out = new PrintStream(new File(String.format("./Input/10x10/OutputTest%d.txt",input)));
             System.setOut(out);
             rnd = new Random(seed);
-            File file = new File(String.format("./Input/20x20/input%d.txt",input));
+            File file = new File(String.format("./Input/10x10/input%d.txt",input));
             Scanner sc = new Scanner(file);
 
             baris = sc.nextInt();
@@ -313,11 +313,11 @@ public class MosaicGA {
 //            double elitismRate = sc.nextDouble();// presentase individu terbaik akan disimpan ke generasi berikutnya
 //            double mutationRate = sc.nextDouble();//probabilitas gen pada kromosom mengalami mutasi
 
-            int maxGenerations = 1000;// maksimal generasi yang akan dimiliki oleh GA
+            int maxGenerations = 3000;// maksimal generasi yang akan dimiliki oleh GA
             int populasiSize = 200; // banyak individu dalam 1 populasi
             double crossoverRate = 0.8;// probabilitas kemungkinan parents melakukan crossover
             double elitismRate = 0.1;// presentase individu terbaik akan disimpan ke generasi berikutnya
-            double mutationRate = 0.01;//probabilitas gen pada kromosom mengalami mutasi
+            double mutationRate = 0.04;//probabilitas gen pada kromosom mengalami mutasi
 
             //Melakukan preprocessing
             runHeuristics();
@@ -384,7 +384,7 @@ public class MosaicGA {
 
     private static void printRataRataEksperimen() throws FileNotFoundException {
         PrintStream out = new PrintStream(
-                new File("./Input/20x20/EksperimenRata_Rata.txt")
+                new File("./Input/10x10/EksperimenRata_Rata.txt")
         );
         System.setOut(out);
 
@@ -403,7 +403,7 @@ public class MosaicGA {
         }
 
         // sort menaik (paling kecil = paling cepat)
-        genList.sort((a, b) -> Double.compare(a.value, b.value));
+//        genList.sort((a, b) -> Double.compare(a.value, b.value));
 
         for (int rank = 0; rank < genList.size(); rank++) {
             BestFEntry e = genList.get(rank);
@@ -428,7 +428,7 @@ public class MosaicGA {
             list.add(new BestFEntry(i, bestFPerInput[i]));
         }
 
-        list.sort((a, b) -> Double.compare(b.value, a.value));
+//        list.sort((a, b) -> Double.compare(b.value, a.value));
 
         for (int rank = 0; rank < list.size(); rank++) {
             BestFEntry e = list.get(rank);
@@ -442,9 +442,9 @@ public class MosaicGA {
         }
         System.out.println();
 
-        System.out.println("==== Harmonic Mean Generasi Best Fitness ====");
-        harmonicMean2D(generasiBestF);
-        System.out.println();
+//        System.out.println("==== Harmonic Mean Generasi Best Fitness ====");
+//        harmonicMean2D(generasiBestF);
+//        System.out.println();
 
         out.close();
     }
